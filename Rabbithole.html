@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rabbithole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700&display=swap">
+<style>
+:root{--bg:#d9f1ff;--ink:#231f4a;--panel:#ffffff;--muted:#5b5788;--soil:#8a5a3c;--carrot:#ff8a1f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1838;--ink:#f3f0ff;--panel:#2b2758;--muted:#b9b3ee}}
+:root[data-theme="dark"]{--bg:#1b1838;--ink:#f3f0ff;--panel:#2b2758;--muted:#b9b3ee}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.5 Nunito,system-ui,sans-serif;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:18px 16px 60px}
+h1,h2,h3,button,.pill{font-family:Fredoka,"Trebuchet MS",sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.logo{font:700 24px Fredoka,sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px}
+.pill{background:var(--panel);border-radius:999px;padding:4px 12px;font-weight:600;font-size:15px}
+.hero{text-align:center;padding:28px 0 10px}
+.bun{font-size:84px;display:inline-block;animation:hop 1.6s ease-in-out infinite;transform-origin:bottom}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}25%{transform:translateY(-22px) rotate(-6deg)}}
+@media (prefers-reduced-motion:reduce){.bun{animation:none}}
+h1{font-size:clamp(34px,9vw,52px);line-height:1.05;margin:6px 0 8px}
+.sub{color:var(--muted);margin:0 auto 20px;max-width:30ch}
+form{display:flex;gap:8px;background:var(--panel);padding:8px;border-radius:999px;box-shadow:0 6px 0 var(--carrot)}
+input{flex:1;min-width:0;border:0;background:none;font:600 18px Nunito,sans-serif;color:var(--ink);padding:8px 14px;outline:none}
+button{cursor:pointer;border:0;font-weight:600}
+.go{background:var(--carrot);color:#231f4a;border-radius:999px;padding:10px 18px;font-size:17px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--carrot);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.chip{background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:16px}
+.bubble{background:var(--panel);border-radius:20px 20px 20px 4px;padding:10px 14px;margin:16px 0;display:flex;gap:10px;align-items:center}
+.bubble span:first-child{font-size:30px}
+.trail{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:14px 0;font-size:15px;color:var(--muted)}
+.trail b{background:var(--panel);color:var(--ink);border-radius:999px;padding:2px 10px;font-weight:700}
+.reveal{background:var(--panel);border-radius:26px;padding:20px;border-bottom:8px solid var(--soil)}
+.reveal .big{font-size:56px;line-height:1}
+h2{font-size:30px;margin:6px 0 8px}
+.src{color:var(--muted);font-size:14px;margin:8px 0 0}
+h3.next{font-size:22px;margin:26px 0 10px}
+.card{border-radius:24px;padding:16px 18px 18px;margin:0 0 14px;color:#231f4a}
+.card:nth-of-type(3n+1){background:#ff9fca;transform:rotate(-.6deg)}
+.card:nth-of-type(3n+2){background:#8fd4ff;transform:rotate(.5deg)}
+.card:nth-of-type(3n){background:#c3f570;transform:rotate(-.3deg)}
+.card h3{font-size:24px;margin:0 0 6px}
+.card p{margin:0 0 8px}
+.fact{background:rgba(255,255,255,.6);border-radius:14px;padding:10px 12px}
+.why{font-size:15px}
+.dig{background:#231f4a;color:#fff;border-radius:999px;padding:10px 16px;font-size:16px;width:100%;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--carrot);color:#231f4a;font:600 16px Fredoka,sans-serif;border-radius:999px;padding:10px 18px;width:max-content;max-width:92vw;text-align:center}
+[hidden]{display:none!important}
+.word{background:none;border:0;padding:0;font:inherit;font-weight:700;color:inherit;cursor:pointer;-webkit-text-decoration:underline wavy var(--carrot);text-decoration:underline wavy var(--carrot);text-underline-offset:4px;text-decoration-thickness:2px}
+.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;background:#ffe66d;color:#231f4a;border-radius:26px 26px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 0 var(--carrot);animation:up .25s ease-out;z-index:5}
+.sheet h3{font-size:24px;margin:0 0 6px}.sheet p{margin:0 0 12px}
+.sheet .row{display:flex;flex-direction:column;gap:8px}
+.shut{background:rgba(35,31,74,.12);color:#231f4a;border-radius:999px;padding:10px 16px;font-size:16px}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}}
+.hook{font:600 19px/1.35 Nunito,sans-serif;margin:0 0 8px}
+.reveal .hook{font-size:21px}
+.deeper{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px}
+.more{border-top:2px dashed var(--muted);margin-top:10px;padding-top:10px}
+.pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+button.pill{border:0;color:var(--ink);cursor:pointer}
+.fox{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(20,10,40,.82);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}
+.fbox{background:#ffb55e;color:#231f4a;border-radius:28px;padding:20px;max-width:520px;width:100%;box-shadow:0 8px 0 #c4561a}
+.face{font-size:72px;line-height:1;text-align:center;animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(-6deg) scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.face{animation:none}}
+.fsay{font:600 18px/1.3 Fredoka,sans-serif;text-align:center;margin:8px 0}
+.fbox h3{font-size:20px;margin:6px 0 10px}
+.bar{height:10px;border-radius:99px;background:rgba(35,31,74,.2);overflow:hidden;margin-bottom:10px}
+.bar i{display:block;height:100%;width:100%;background:#c4561a}
+.opt{display:block;width:100%;text-align:left;background:#fff;color:#231f4a;border-radius:16px;padding:12px 14px;margin:8px 0;font:600 16px/1.35 Nunito,sans-serif}
+.nom{display:block;font:700 24px Fredoka,sans-serif;margin-top:6px}
+.weblink{display:inline-block;background:var(--carrot);color:#231f4a;border-radius:999px;padding:10px 18px;font:600 17px Fredoka,sans-serif;text-decoration:none;margin-top:14px}
+.acts2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+a.wiki{border:2px solid var(--ink);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 16px Fredoka,sans-serif;text-decoration:none}
+.bits{margin:4px 0 8px;padding-left:20px}
+.bits li{margin:4px 0}
+html{-webkit-text-size-adjust:100%}
+button,input{-webkit-appearance:none;appearance:none}
+input{border-radius:0;-webkit-tap-highlight-color:transparent}
+button,a{-webkit-tap-highlight-color:transparent}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <button class="logo" id="home" aria-label="Back to start">🐇 Rabbithole</button>
+    <div class="pills"><span class="pill" id="lives" hidden></span><span class="pill" id="carrots" hidden>🥕 0</span><button class="pill" id="foxbtn" aria-pressed="true">🦊 on</button></div>
+  </div>
+  <div id="app"></div>
+</main>
+<aside class="sheet" id="sheet" hidden></aside>
+<div class="fox" id="fox" role="dialog" aria-modal="true" aria-labelledby="fq" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+const N={
+cats:{k:'cat kitten',e:'🐱',t:'Cats',f:'Cats can sleep 12 to 16 hours a day.',d:'Domestic cats descend from the African wildcat and have lived alongside people for thousands of years. They are ambush hunters with superb night vision, and that is exactly where the tunnels start.',s:'Wikipedia: Cat',n:[['egypt','Cats were woven into Egyptian religion and daily life.'],['domestic','How did a solitary hunter end up on your sofa?'],['eyes','Cats see in the dark, and the trick is built into the eye.']]},
+egypt:{k:'egypt pharaoh',e:'🏺',t:'Ancient Egypt',f:'The Greek historian {{herodotus|Herodotus}} reported that Egyptian households shaved their eyebrows in mourning when a cat died.',d:'Egyptian civilisation grew along the Nile and lasted over 3,000 years. Cats were linked to the goddess {{bastet|Bastet}}, and harming one was treated very seriously. Egypt also gave the world some of its earliest writing.',s:'Wikipedia: Cats in ancient Egypt',n:[['writing','Egypt developed one of the world\'s earliest writing systems.'],['domestic','Egyptian grain stores are where the cat and human deal may have begun.'],['gold','Egyptians treated gold as divine, and Tutankhamun\'s tomb was full of it.']]},
+domestic:{k:'domestic',e:'🌾',t:'Cats domesticating themselves',f:'Cats mostly domesticated themselves: they likely moved in to hunt the mice raiding early farmers\' grain.',d:'Genetic studies suggest wildcats began hanging around early farming settlements. Mice ate the grain, cats ate the mice, and humans noticed. Unlike dogs, cats were never really bred for a job. They just stayed.',s:'Wikipedia: Cat',n:[['egypt','Egypt\'s grain stores helped spread the cat far and wide.'],['dna','Cat DNA lets scientists read that story backwards.'],['cheese','The same farming revolution gave us dairy.']]},
+eyes:{k:'eye',e:'👁️',t:'Eyes that glow in the dark',f:'Cat eyes have a built-in mirror behind the retina that gives light a second chance to be seen.',d:'The mirror is called the {{tapetum|tapetum lucidum}}. It bounces light back through the retina, which is why eyes glow in headlights. Octopus eyes are wonderfully different: they evolved separately, and have no blind spot.',s:'Wikipedia: Tapetum lucidum',n:[['octopus','Octopus eyes evolved on a totally separate branch of life.'],['stars','Eyes catch light, and starlight is very old light.']]},
+writing:{k:'writing hieroglyph',e:'✍️',t:'Writing',f:'Some of the earliest known writing is basically accounting: receipts for grain and beer.',d:'Early writing often began as tallies of goods. Stories and letters came later. Once words could sit still on clay or {{papyrus|papyrus}}, knowledge could outlive the person who had it.',s:'Wikipedia: History of writing',n:[['info','Writing made information persistent, so it could be stored and sent.'],['crypto','The moment you can write a message, somebody wants to hide one.'],['zero','Zero is one of the biggest inventions in the history of writing numbers.']]},
+crypto:{k:'crypto cipher code enigma',e:'🔐',t:'Codes and ciphers',f:'A three-rotor {{enigma|Enigma machine}} had about 159 {{quintillion|quintillion}} possible settings.',d:'Secret writing is almost as old as writing. Enigma scrambled letters with rotors that moved on every keypress. Allied codebreakers still cracked it, using maths, operator mistakes and early machines.',s:'Wikipedia: Enigma machine',n:[['turing','Alan Turing helped break Enigma.'],['info','Every cipher is really a game about information.'],['lang','Codes are language in disguise.']]},
+info:{k:'information',e:'📡',t:'Information',f:'In 1948 {{shannon|Claude Shannon}} showed information can be measured, and one fair coin flip is exactly one "{{bit|bit}}".',d:'Shannon\'s big idea: information is about surprise. A message you could already guess carries almost none. That idea sits under everything from zip files to phone signals, and even DNA.',s:'Wikipedia: Information theory',n:[['turing','Turing imagined the machine that would process it all.'],['dna','Life stored information long before we did.'],['music','Music is patterns and surprise, which is Shannon\'s idea in action.']]},
+turing:{k:'turing',e:'🧠',t:'Alan Turing',f:'Turing described a general-purpose computer on paper in 1936, years before anyone built one.',d:'His paper imagined a simple machine reading symbols on a tape that could, in principle, compute anything computable. In WWII he worked on Enigma at {{bletchley|Bletchley Park}}. In 1950 he asked whether machines can think.',s:'Wikipedia: Alan Turing',n:[['ai','In 1950 Turing asked whether machines can think.'],['crypto','Turing\'s wartime work was all about breaking codes.'],['zero','Every computer runs on zeros and ones.']]},
+octopus:{k:'octopus squid cephalopod',e:'🐙',t:'Octopuses',f:'An octopus has three hearts, blue blood, and about two thirds of its neurons in its arms.',d:'Two hearts serve the gills and one serves the body. The blood is blue because it uses copper-based {{haemocyanin|haemocyanin}} instead of iron. With most neurons in the arms, each arm can do a lot of its own thinking.',s:'Wikipedia: Octopus',n:[['ai','A very different kind of intelligence, spread through the arms.'],['dna','Octopuses edit their own RNA on a huge scale, remixing their genetic instructions.'],['eyes','Their eyes evolved separately from ours.']]},
+dna:{k:'dna gene genetic',e:'🧬',t:'DNA',f:'Stretch the DNA from one human cell end to end and it is about two metres long.',d:'DNA is a chemical code written with four letters. Each cell packs about two metres of it by coiling it around proteins. Reading it lets scientists trace stories like where cats came from.',s:'Wikipedia: DNA',n:[['info','DNA is nature\'s way of storing information.'],['octopus','Some of the strangest DNA tricks belong to octopuses.'],['fungi','Fungi are closer cousins to animals than to plants, and DNA proved it.']]},
+ai:{k:'ai artificial intelligence robot',e:'🤖',t:'Artificial intelligence',f:'In 1950 Turing proposed swapping "can machines think?" for a party game: could you tell a machine from a person by text alone?',d:'Turing\'s "{{imitation|imitation game}}" became the famous Turing test. AI has swung between big hype and quiet "{{winter|winters}}" since. What "thinking" should even mean is still argued over.',s:'Wikipedia: Turing test',n:[['octopus','Octopuses show minds can be built in very different ways.'],['info','Machines and minds both come down to processing information.'],['frank','Long before AI, one novel asked what happens when we build a mind.']]}
+,bees:{k:'bee honey',e:'🐝',t:'Honeybees',f:'A honeybee tells its hive-mates where flowers are by dancing: the angle of the waggle points the way, and its length gives the distance.',d:'The waggle dance was decoded by {{vonfrisch|Karl von Frisch}}, who won a Nobel Prize for it in 1973. Bees also use the sun as a compass, and can find it on cloudy days by sensing polarised light.',s:'Wikipedia: Waggle dance',n:[['nav','Bees navigate by the sun. So did human sailors.'],['lang','A dance that carries directions is a language, of sorts.'],['fungi','Bees and fungi both run huge cooperative networks.']]}
+,nav:{k:'navigat wayfind compass',e:'🧭',t:'Wayfinding',f:'Polynesian navigators crossed thousands of miles of open Pacific using stars, swells and birds, with no instruments.',d:'Wayfinders read star paths, ocean swells, cloud shapes and the flight of land-nesting birds. In 1976 the canoe Hokule\'a sailed from Hawaii to Tahiti using traditional methods only.',s:'Wikipedia: Polynesian navigation',n:[['stars','Their compass was the night sky.'],['time','Ships also needed accurate clocks to find longitude.'],['bees','Bees are natural navigators too.']]}
+,stars:{k:'star light',e:'⭐',t:'Starlight',f:'The nearest star system beyond the Sun is over four light-years away, so you see it as it was more than four years ago.',d:'Light takes about eight minutes to reach us from the Sun and years from other stars. Every telescope is a time machine, and some starlight left before humans existed.',s:'Wikipedia: Light-year',n:[['gold','Stars are where the heavy elements come from.'],['nav','Sailors turned stars into a map.'],['moon','Our nearest neighbour in the night sky is drifting away.']]}
+,gold:{k:'gold',e:'🥇',t:'Gold',f:'A lot of Earth\'s gold was probably forged when neutron stars collided.',d:'In 2017 astronomers saw two {{neutron|neutron stars}} merge and spotted signs of heavy elements, gold included, being made. Every gold ring is a souvenir of an ancient space crash.',s:'Wikipedia: Kilonova',n:[['stars','Stars and their explosions made the elements.'],['volcano','Volcanic plumbing helps concentrate gold into veins.'],['chocolate','In Aztec markets, cacao beans were money instead.']]}
+,volcano:{k:'volcan lava eruption',e:'🌋',t:'Volcanoes',f:'After the 1815 eruption of Mount Tambora, 1816 became known as the Year Without a Summer.',d:'{{tambora|Tambora}}\'s ash and sulphur veiled the sky and cooled the planet, and crops failed across Europe and North America. That gloomy summer also helped inspire a famous novel.',s:'Wikipedia: Year Without a Summer',n:[['frank','A cold, dark summer led to a monster story.'],['gold','Volcanic plumbing helps concentrate gold into veins.'],['fungi','Fungi are among the first things to move into fresh volcanic ground.']]}
+,frank:{k:'frankenstein shelley',e:'📖',t:'Frankenstein',f:'Mary Shelley began Frankenstein at 18, during a ghost-story contest on a rainy holiday in 1816.',d:'Lord Byron challenged the group at Lake Geneva to write ghost stories. Shelley\'s tale asked what happens when science outruns responsibility, and it is often called an early work of science fiction.',s:'Wikipedia: Frankenstein',n:[['ai','Frankenstein is about building a mind. So is AI.'],['elec','Experiments with electricity and life haunted the book.'],['volcano','That rainy summer was caused by a volcano.']]}
+,elec:{k:'electric galvani',e:'⚡',t:'Animal electricity',f:'In the 1780s Luigi Galvani made dead frogs\' legs twitch with electricity, and set off a great argument about life itself.',d:'Galvani believed animals carried their own "animal electricity". Alessandro Volta disagreed and, while proving it, invented the battery. Both were partly right: nerves really do run on electrical signals.',s:'Wikipedia: Luigi Galvani',n:[['octopus','Octopus arms run on the same kind of nerve signals.'],['ai','Artificial neural networks were loosely inspired by nerve cells.'],['frank','Galvani\'s twitching frogs haunted a famous novel.']]}
+,cheese:{k:'cheese dairy milk',e:'🧀',t:'Cheese',f:'Cheese has far less lactose than milk, which may be why early farmers loved it long before most adults could digest milk.',d:'Residue on 7,000-year-old pottery shows farmers in Europe were already processing milk. The ability to keep making {{lactase|lactase}} into adulthood spread later, a clear case of humans evolving alongside a food.',s:'Wikipedia: Cheese',n:[['dna','A single gene change let adults drink milk.'],['fungi','Blue cheese is basically a mould garden.'],['chocolate','Another food humans learned to transform.']]}
+,fungi:{k:'fung mushroom mould',e:'🍄',t:'Fungi',f:'A honey fungus in Oregon covers roughly 2,000 acres, mostly as hidden {{mycelium|mycelium}}, and may be thousands of years old.',d:'Most of a fungus lives underground as fine threads. Fungi are more closely related to animals than to plants. They also give us yeast for bread, moulds for cheese and the discovery of penicillin.',s:'Wikipedia: Armillaria ostoyae',n:[['cheese','Some fungi make cheese famous.'],['dna','DNA showed fungi are closer cousins to animals.'],['chocolate','Chocolate needs microbes to ferment the beans.']]}
+,zero:{k:'zero',e:'0️⃣',t:'The number zero',f:'One of the earliest known zero symbols, a simple dot, sits in the Bakhshali manuscript, which carbon dating puts centuries earlier than once thought.',d:'Zero began as a placeholder in several cultures. Indian mathematicians such as {{brahmagupta|Brahmagupta}}, around 628 CE, wrote rules for using zero as a number in its own right. Without it, computing, which is all zeros and ones, would not exist.',s:'Wikipedia: 0',n:[['info','Bits are just zeros and ones.'],['writing','Zero is a writing invention too.'],['time','Zero also gives us "midnight" and year zero puzzles.']]}
+,music:{k:'music song',e:'🎵',t:'Music and chills',f:'Brain scans show dopamine is released just before the best moment of a favourite song, not only during it.',d:'The brain rewards you for anticipating the peak as well as hearing it. Music lights up the same reward systems as food. It is also found in every known human culture.',s:'Wikipedia: Music and emotion',n:[['info','Music is patterns and surprise.'],['elec','Chills are your nerves firing electrical signals.'],['lang','Music and speech share brain machinery.']]}
+,sleep:{k:'sleep dream',e:'😴',t:'Sleep',f:'Dolphins and some birds sleep with half their brain at a time.',d:'Sleeping with one brain half awake lets a dolphin keep surfacing to breathe. Humans spend about a third of life asleep, and scientists still argue about exactly why we need it. Memory storage and brain "cleaning" are strong leads.',s:'Wikipedia: Unihemispheric slow-wave sleep',n:[['cats','Cats sleep for up to two thirds of the day.'],['octopus','Octopuses seem to have sleep-like states with flickering skin colours.'],['music','Sleep and music are tightly linked in memory.']]}
+,time:{k:'time clock',e:'⏳',t:'Time zones',f:'Before railways, every town kept its own local time. Timetables are what forced countries to standardise.',d:'Britain adopted "railway time" in the 1840s. In the US, railroads introduced four time zones in 1883, and the law followed later. Clocks became a shared language.',s:'Wikipedia: Railway time',n:[['nav','Sailors needed accurate clocks to find longitude.'],['stars','Clock time began with watching the sky.'],['moon','Days are getting longer because of the Moon.']]}
+,chocolate:{k:'chocolate cacao',e:'🍫',t:'Chocolate',f:'The Aztecs drank chocolate as a bitter, frothy drink, and cacao beans were even used as currency.',d:'Cacao comes from the Amazon basin, and traces suggest people used it in Ecuador over 5,000 years ago. Chocolate only became sweet and solid after Europeans added sugar, centuries later.',s:'Wikipedia: Chocolate',n:[['fungi','Yeast and bacteria ferment the beans.'],['gold','Cacao beans were money in Aztec markets.'],['cheese','Two foods humans learned to transform.']]}
+,moon:{k:'moon lunar',e:'🌙',t:'The Moon',f:'The Moon is drifting away from Earth at about 3.8 centimetres a year.',d:'Reflectors left by Apollo astronauts let scientists measure the Moon\'s distance to within millimetres. Tides drag the Moon outward and slow Earth\'s spin, so days are getting very slightly longer.',s:'Wikipedia: Moon',n:[['stars','Same night sky, very different distance.'],['time','Our days are getting longer, thanks to the Moon.'],['nav','Tides and moonlight have guided sailors for millennia.']]}
+,lang:{k:'language whistl speech',e:'🗣️',t:'Whistled languages',f:'In La Gomera, Spain, people can chat across valleys in Silbo Gomero, a whistled form of Spanish.',d:'Whistling carries for miles across ravines. The brain handles whistled speech in its language areas, not just its sound areas. Whistled languages exist in mountains and forests around the world.',s:'Wikipedia: Silbo Gomero',n:[['writing','Speech came long before writing.'],['bees','Bees send directions by dancing.'],['music','Whistling sits right between speech and song.']]}
+,bats:{k:'bat echoloc',e:'🦇',t:'Bats',d:'Bats shout high-pitched calls and listen for the echoes to build a picture of the dark. Many of the calls are too high for human ears. A few other animals, such as dolphins, use echolocation too.',s:'Wikipedia: Animal echolocation',n:[['eyes','Another solution to seeing in the dark.'],['music','Echoes, pitch and timing: bats are tiny sound engineers.'],['sleep','Most bats sleep hanging upside down.']]}
+,elephant:{k:'elephant mirror',e:'🐘',t:'Elephants',d:'In a famous mirror test, an Asian elephant named Happy touched a mark on her own head that she could only see in the mirror. Passing is taken as a sign of self-awareness. Only a short list of animals has managed it.',s:'Wikipedia: Mirror test',n:[['octopus','Another animal that keeps surprising scientists about minds.'],['eyes','What do you see when you see yourself?'],['ai','Self-awareness is a big question for machines too.']]}
+,birdnav:{k:'migrat magnet bird',e:'🐦',t:'Birds with compasses',d:'Some migrating birds, like European robins, seem to sense Earth\'s magnetic field. One leading idea involves a light-sensitive protein in the eye called cryptochrome, and possibly a quantum effect. It is still being researched.',s:'Wikipedia: Magnetoreception',n:[['nav','Humans needed maps and stars. Birds seem to have another trick.'],['stars','Many birds also steer by the stars.'],['eyes','The compass may be in the eye.']]}
+,cooking:{k:'cook fire',e:'🍳',t:'Cooking',d:'The cooking hypothesis says cooked food gave early humans more energy for less chewing and digesting. Not everyone agrees on when cooking began, so it is still debated.',s:'Wikipedia: Control of fire by early humans',n:[['dna','Our genes changed alongside our diet.'],['cheese','Another food technology that changed us.'],['chocolate','From bean to bar takes a lot of tricks.']]}
+,rainbow:{k:'rainbow',e:'🌈',t:'Rainbows',d:'Raindrops bounce sunlight back in a circle around the point opposite the Sun. The ground gets in the way, so you normally see only an arch. From a plane or a mountain you can sometimes see the full circle.',s:'Wikipedia: Rainbow',n:[['eyes','Colour is what your eyes make of light.'],['glass','A prism does the same trick as raindrops.'],['colour','Why is almost nothing truly blue?']]}
+,glass:{k:'glass',e:'🪟',t:'Old window glass',d:'At everyday temperatures glass does not flow in any way you would notice over centuries. Old panes were uneven because of how they were made, and glaziers often fitted the heavy edge at the bottom.',s:'Wikipedia: Glass',n:[['volcano','Nature makes glass too, in volcanoes.'],['rainbow','Glass bends light into colours.'],['stars','Telescopes are glass pointed at the sky.']]}
+,chili:{k:'chili chilli capsaicin spicy',e:'🌶️',t:'Chilli peppers',d:'Capsaicin burns mammals, who tend to crush the seeds. Birds do not feel it and spread the seeds intact. Humans are one of the few animals that enjoy the burn.',s:'Wikipedia: Capsaicin',n:[['chocolate','Another American plant that took over the world.'],['elec','The burn is a nerve signal, not a temperature.'],['fungi','Some research says it also helps the plant against fungi.']]}
+,gps:{k:'gps satellite einstein relativity',e:'🛰️',t:'GPS and Einstein',d:'Satellite clocks run faster than ground clocks because gravity is weaker up there, and slower because of their speed. The net result is about 38 microseconds fast per day. Uncorrected, positions would wander by around ten kilometres a day.',s:'Wikipedia: Error analysis for the Global Positioning System',n:[['time','Clocks that disagree are the whole puzzle.'],['nav','The modern version of steering by the stars.'],['moon','Satellites circle Earth like tiny moons.']]}
+,honey:{k:'honey',e:'🍯',t:'Honey',d:'Honey has very little water and is quite acidic, so most microbes cannot grow in it. Bees also add an enzyme that makes a little hydrogen peroxide. Sealed honey can keep for a very long time.',s:'Wikipedia: Honey',n:[['bees','The bees behind the jar.'],['microbes','Why can microbes not live in it?'],['cheese','Another way people keep food from spoiling.']]}
+,ants:{k:'ant leafcutter',e:'🐜',t:'Farming ants',d:'Leafcutter ants carry leaves home, not to eat, but to feed a fungus that feeds them. They weed the garden and use helpful bacteria to guard it. Humans only started farming about ten thousand years ago.',s:'Wikipedia: Leafcutter ant',n:[['fungi','The ants\' crop is a fungus.'],['bees','Another super-organised insect society.'],['domestic','Farming, before humans.']]}
+,microbes:{k:'microbe bacteria microbiome germ',e:'🦠',t:'Your microbes',d:'Recent estimates put it at roughly one bacterial cell for every human cell. Most live in your gut and help with digestion and more. Together they weigh only a couple of hundred grams.',s:'Wikipedia: Human microbiome',n:[['fungi','Your body hosts fungi too.'],['dna','You carry more microbial genes than human ones.'],['cheese','Cheese is a microbe garden you can eat.']]}
+,colour:{k:'colour color blue',e:'🎨',t:'Blue things',d:'Most blue feathers and butterfly wings contain no blue pigment. Tiny structures scatter light so that only blue bounces back out. A few exceptions exist.',s:'Wikipedia: Structural coloration',n:[['rainbow','Colour from light, not from paint.'],['octopus','Octopuses have blue blood and colour-changing skin.'],['eyes','Colour is something eyes make up.']]}
+,saturn:{k:'saturn planet',e:'🪐',t:'Saturn',d:'Saturn\'s average density is below that of water, so in theory it would float. No bath is that big, of course. Its moon Enceladus also shoots geysers of icy water from its south pole.',s:'Wikipedia: Saturn',n:[['moon','Saturn has dozens of moons.'],['stars','Saturn is visible to the naked eye, no telescope needed.'],['volcano','Enceladus has ice volcanoes.']]}
+};
+const W={
+quintillion:{t:'Quintillion',d:'A 1 followed by 18 zeros. Counting one number per second, you would need about 31 billion years to get there, which is more than twice the {{universe|age of the universe}}.'},
+universe:{t:'The age of the universe',d:'About 13.8 billion years. So a quintillion seconds would outlast it more than twice over. Bunny gets dizzy.'},
+enigma:{t:'The Enigma machine',d:'Enigma had a fatal quirk: no letter could ever be encrypted as itself. That tiny flaw helped the codebreakers at {{bletchley|Bletchley Park}} crack it.',go:'crypto'},
+bletchley:{t:'Bletchley Park',d:'Britain\'s secret WWII codebreaking base. Around 10,000 people worked there at its peak, many of them women, and it stayed hush-hush for decades.',go:'turing'},
+bastet:{t:'Bastet',d:'An Egyptian goddess who began as a lioness and slowly became a house cat. Her cult centre was the city of Bubastis.'},
+herodotus:{t:'Herodotus',d:'Called the Father of History. Some ancient critics also called him the Father of Lies, because of his tall tales.'},
+haemocyanin:{t:'Haemocyanin',d:'A copper-based oxygen carrier that turns blue when it holds oxygen. Snails and horseshoe crabs use it too. Our iron-based haemoglobin goes red.'},
+shannon:{t:'Claude Shannon',d:'Founder of information theory, and a tinkerer. In 1950 he built Theseus, a mechanical mouse that learned its way through a maze.',go:'ai'},
+bit:{t:'The bit',d:'Short for "binary digit", a term credited to the statistician John Tukey. Shannon\'s 1948 paper made it famous.'},
+tapetum:{t:'Tapetum lucidum',d:'The eye-shine layer. It glows green, yellow or blue in torchlight. Humans lack one, so our red-eye in photos is just blood vessels.'},
+imitation:{t:'The imitation game',d:'Turing\'s first version was a party game about telling a man from a woman by written notes. Then he asked what happens if a machine takes a player\'s place.'},
+winter:{t:'AI winters',d:'Stretches (the mid 1970s, the late 1980s) when funding and hype collapsed because AI had overpromised.'},
+papyrus:{t:'Papyrus',d:'A reed that grows on the Nile, pressed into writing sheets. It is where the word "paper" comes from.'},
+tambora:{t:'Mount Tambora',d:'Its 1815 eruption was the largest in recorded history, and was heard around 2,000 km away.'},
+vonfrisch:{t:'Karl von Frisch',d:'He won the 1973 Nobel Prize for decoding the bee dance, after many scientists doubted the idea for decades.'},
+neutron:{t:'Neutron stars',d:'The collapsed cores of giant stars, so dense that a teaspoon of one would weigh billions of tonnes.'},
+brahmagupta:{t:'Brahmagupta',d:'An Indian mathematician who, around 628 CE, wrote rules for arithmetic with zero. Dividing by it stumped him.'},
+mycelium:{t:'Mycelium',d:'The underground web of fine threads a fungus grows. Some people nickname the way it links tree roots the "wood wide web".'},
+lactase:{t:'Lactase',d:'The enzyme that digests milk sugar. In many people it switches off after childhood. In others a gene keeps it on for life.'}};
+const lk=s=>s.replace(/\{\{(\w+)\|([^}]+)\}\}/g,(m,k,t)=>`<button class="word" data-w="${k}">${t}</button>`);
+function openWord(k){const w=W[k];if(!w)return;
+  if(!S.seen.has(k)){S.seen.add(k);S.carrots++;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots}
+  const can=w.go&&!S.trail.includes(w.go);
+  $('sheet').innerHTML=`<h3>🔎 ${w.t}</h3><p>${lk(w.d)}</p><div class="row">${can?`<button class="dig" data-go="${w.go}" data-close="1">Tunnel to ${N[w.go].t}</button>`:''}<button class="shut" data-close="1">Back up</button></div>`;
+  $('sheet').hidden=false}
+const H={
+cats:'Your cat sleeps up to 16 hours a day. What is it saving its energy for?',
+egypt:'When a household cat died, Egyptians reportedly shaved their eyebrows in mourning, says {{herodotus|Herodotus}}. What were cats to them?',
+domestic:'Nobody tamed the cat: it talked itself into the barn, ate the mice and never left. So who domesticated whom?',
+eyes:'There is a tiny mirror inside a cat’s eye. What is it doing in there?',
+writing:'Some of the world’s earliest writing is basically receipts for grain and beer. So how did we get from receipts to poetry?',
+crypto:'One {{enigma|Enigma}} machine had about 159 {{quintillion|quintillion}} possible settings, and it still got cracked. How?',
+info:'{{shannon|Claude Shannon}} proved a single coin flip is exactly one ‘{{bit|bit}}’ of information. How do you weigh a surprise?',
+turing:'Alan Turing described the modern computer on paper in 1936, before anyone had built one. What was he picturing?',
+octopus:'An octopus has three hearts, blue blood, and most of its neurons in its arms. So who is in charge down there?',
+dna:'The DNA in one of your cells would stretch about two metres. How does it all fit in?',
+ai:'In 1950 Turing swapped ‘can machines think?’ for a party game. What was the game?',
+bees:'A honeybee tells its friends where the flowers are by wiggling. How does a dance carry directions?',
+nav:'Polynesian sailors crossed thousands of miles of open ocean with no instruments. How did they not get lost?',
+stars:'The nearest star beyond the Sun is over four light-years away, so you are seeing old news. What else up there is?',
+gold:'A lot of Earth’s gold was probably made in a cosmic car crash between neutron stars. What crashed, exactly?',
+volcano:'One volcano cancelled summer in 1816. How does a mountain do that?',
+frank:'Mary Shelley started Frankenstein at 18, on a rainy holiday, after a ghost-story dare. How did that become science fiction?',
+elec:'In the 1780s a scientist made dead frogs’ legs twitch with electricity. What did that have to do with life?',
+cheese:'Cheese probably won over early farmers because it has far less milk sugar than milk. Why could they not just drink the milk?',
+fungi:'One fungus in Oregon covers about 2,000 acres, mostly hidden as {{mycelium|mycelium}}. Is that really one organism?',
+zero:'One of the earliest zeros ever found is just a dot in an old manuscript. Where did nothing come from?',
+music:'Your brain gets a dopamine hit just before the best bit of a favourite song. How does it know what is coming?',
+sleep:'Dolphins sleep with half their brain at a time. What is the other half up to?',
+time:'Before trains, every town kept its own local time. What made everyone finally agree?',
+chocolate:'The Aztecs drank chocolate bitter and frothy, and spent cacao beans like money. Would you pay for lunch in chocolate?',
+moon:'The Moon is sneaking away from us at about 3.8 centimetres a year. Where is it going?',
+lang:'In La Gomera, villagers chat across valleys in a whistled version of Spanish. How do you whistle a sentence?'};
+
+Object.assign(H,{
+bats:'A bat can catch a moth in pitch darkness using only the echoes of its own shouts. How do you see with your ears?',
+elephant:'Elephants can recognise themselves in a mirror, and only a short list of animals can. What does it take to know that is you?',
+birdnav:'Some birds may be able to sense Earth’s magnetic field. How do you feel a force you cannot see?',
+cooking:'Some scientists think cooking helped make us human, by freeing up energy for bigger brains. Did dinner build the brain?',
+rainbow:'Every rainbow is really a full circle. Why do we only ever see half?',
+glass:'Old windows are thicker at the bottom, but not because glass slowly flows. So what happened?',
+chili:'Birds cannot feel chilli heat, but mammals can. Is that why chilli plants want birds to eat them?',
+gps:'Without Einstein, your phone’s GPS would drift by kilometres every day. Why do satellite clocks disagree with yours?',
+honey:'Honey is almost impossible to spoil. What are the bees doing to it?',
+ants:'Leafcutter ants have farmed fungus for tens of millions of years. Who taught them agriculture?',
+microbes:'You carry about as many bacteria as you have human cells, give or take. So who is really in charge of you?',
+colour:'Almost nothing in nature is truly blue. So how is a bluebird blue?',
+saturn:'Saturn is less dense than water. Could it float in a big enough bath?'});
+N.bees.k='bee';
+[['cats','bats','Both are famous night hunters.'],['eyes','bats','Bats solved the dark with ears instead.'],['eyes','colour','Colour is what eyes make of light.'],['octopus','elephant','Another mind that surprises scientists.'],['octopus','colour','Octopus blood is blue, and its skin changes colour.'],['bees','honey','What bees make, and why it never spoils.'],['bees','ants','Another super-organised insect society.'],['fungi','ants','Ants farm fungus.'],['fungi','microbes','Fungi live in and on you.'],['cheese','honey','Another way to keep food from spoiling.'],['cheese','microbes','Cheese is a microbe garden.'],['chocolate','chili','Another American plant that took over the world.'],['nav','birdnav','Birds have their own compass.'],['nav','gps','The modern version of finding your way.'],['time','gps','Clocks in space disagree with ours.'],['moon','saturn','Another world with moons.'],['stars','saturn','Saturn is visible to the naked eye.'],['stars','glass','Telescopes are glass pointed at the sky.'],['volcano','glass','Volcanoes make natural glass.'],['volcano','saturn','Saturn’s moon Enceladus has ice volcanoes.'],['dna','microbes','Your microbes carry more genes than you do.'],['dna','cooking','Cooking may have shaped our genes.'],['domestic','ants','Ants invented farming first.'],['elec','chili','The chilli burn is a nerve signal.'],['music','bats','Bats sing in sounds we cannot hear.'],['sleep','bats','Bats sleep hanging upside down.'],['ai','elephant','Self-awareness is the next question for machines.']].forEach(([a,b,w])=>N[a].n.push([b,w]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const BAD=/\b(fuck\w*|shit\w*|bullshit|bitch\w*|bastard\w*|asshole\w*|arsehole\w*|dick(head)?s?|pussy|pussies|cunt\w*|wank\w*|twat\w*|whore\w*|slut\w*|porn\w*|xxx|nudes?|nsfw|hentai|erotic\w*|milf|nigg\w*|fag(got)?s?|retard\w*|cocks?|tits?|boobs?|sex|sexy)\b/i;
+const rude=t=>{const n=t.toLowerCase().replace(/[@4]/g,'a').replace(/[$5]/g,'s').replace(/0/g,'o').replace(/[1!|]/g,'i').replace(/3/g,'e');return BAD.test(t)||BAD.test(n)};
+const RUDE=['Do you kiss your mother with that mouth? 🐇','Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Somebody woke up on the wrong side of the burrow.','Bunny is covering his ears. La la la, not listening!','Granny Bunny just dropped her knitting. Try again, politely!','Is that how you talk at the dinner table? The carrots are blushing.','Mind your whiskers! This is a nice burrow.','Hop it! That kind of word never got anyone down a rabbit hole.','Gasp! I am telling the Owl on you.'];
+let rudeDeck=[],lastRude='';
+const nextRude=()=>{if(!rudeDeck.length){rudeDeck=RUDE.slice().sort(()=>Math.random()-.5);if(rudeDeck[rudeDeck.length-1]===lastRude)rudeDeck.unshift(rudeDeck.pop())}return lastRude=rudeDeck.pop()};
+function unknown(q){
+  start('Bunny has not dug a tunnel for that one yet!');
+  const u='https://duckduckgo.com/?kp=1&q='+encodeURIComponent(q);
+  $('app').querySelector('.chips').insertAdjacentHTML('beforebegin',`<a class="weblink" href="${u}" target="_blank" rel="noopener noreferrer">🔎 Search the web for “${esc(q)}”</a>`);
+  $('q').value=q;
+}
+const wiki=n=>'https://en.wikipedia.org/w/index.php?title=Special%3ASearch&go=Go&search='+encodeURIComponent(String(n.s).replace(/^Wikipedia:\s*/,''));
+const M={
+cats:['A group of cats is called a clowder.','Cats have a righting reflex that twists them round to land on their feet.'],
+egypt:['Egyptians used a 365-day calendar: twelve months of 30 days, plus five extra days.','The Great Pyramid of Giza was the tallest human-made structure for nearly 4,000 years.'],
+domestic:['Dogs joined humans thousands of years before cats did, as far as scientists can tell.','Unlike most pets, cats still hunt even when well fed.'],
+eyes:['Cats need about six times less light than we do to see.','Slit pupils can open and close more dramatically than round ones.'],
+writing:['Cuneiform was written by pressing a reed into wet clay.','Egyptian hieroglyphs stayed undeciphered until the Rosetta Stone helped crack them in the 1820s.'],
+crypto:['The Caesar cipher, shifting every letter along, is named after Julius Caesar.','Turing designed the Bombe, a machine for hunting down Enigma settings.'],
+info:['Shannon’s master’s thesis, written in his early twenties, showed how electrical switches can do logic.','Morse code squeezed information: common letters got short codes, like a single dot for E.'],
+turing:['Turing was a serious long-distance runner.','The Turing Award is often called the Nobel Prize of computing.'],
+octopus:['An octopus can squeeze through any gap bigger than its beak, its only hard part.','Many octopuses live only a year or two.'],
+dna:['Any two humans are about 99.9 percent identical in their DNA.','Humans and chimpanzees share roughly 98 to 99 percent of theirs.'],
+ai:['The word “robot” comes from a Czech word for forced labour, from a 1920 play.','In 1997 a computer called Deep Blue beat chess champion Garry Kasparov.'],
+bees:['A hive makes a pound of honey from roughly two million flower visits.','Summer worker bees live only a few weeks.'],
+nav:['Wayfinders memorise a “star compass”, the rising and setting points of dozens of stars.','The Polynesian Triangle stretches from Hawaii to New Zealand to Easter Island.'],
+stars:['Looking at a distant galaxy means seeing light that left it millions or billions of years ago.','The Sun is a star, about 150 million kilometres away.'],
+gold:['All the gold ever mined would fit in a cube roughly 20 metres on each side.','Gold can be beaten into sheets thin enough to see light through.'],
+volcano:['Some historians say crop failures after Tambora, with horses short of oats, helped inspire the bicycle.','Big eruptions can turn sunsets unusually red.'],
+frank:['Frankenstein was published anonymously in 1818.','Frankenstein is the scientist’s name, not the monster’s.'],
+elec:['Volta’s first battery was a stack of metal discs separated by damp cloth.','The volt is named after Volta.'],
+cheese:['By some counts there are well over a thousand kinds of cheese.','Parmigiano Reggiano wheels are aged for at least 12 months.'],
+fungi:['Fungi are the main recyclers of dead wood.','Penicillin was discovered by accident in 1928, from a mould that drifted onto a dish.'],
+zero:['The Maya also used a zero symbol, invented independently.','Roman numerals have no zero.'],
+music:['Newborn babies can detect a steady beat.','Playing an instrument fires up many parts of the brain at once.'],
+sleep:['Giraffes in the wild sleep only a few hours a day, often in short naps.','Sea otters sometimes hold hands while they sleep so they do not drift apart.'],
+time:['In 1884 an international conference chose Greenwich as the zero meridian.','China uses a single time zone for the whole country.'],
+chocolate:['Cacao trees only grow within about 20 degrees of the equator.','White chocolate has cocoa butter but no cocoa solids.'],
+moon:['The Moon always shows us the same face, because it spins once per trip around Earth.','Twelve people have walked on the Moon.'],
+lang:['Whistled languages exist in places such as Turkey, Greece and the Canary Islands.','About 7,000 languages are spoken in the world today.'],
+bats:['Bats are the only mammals that can truly fly.','A small bat can eat hundreds of tiny insects in an hour.'],
+elephant:['Elephants rumble to each other over long distances, in sounds too low for us to hear.','An elephant’s trunk has tens of thousands of muscle bundles.'],
+birdnav:['Arctic terns migrate from the Arctic to Antarctica and back every year.','Some birds can fly for days without landing.'],
+cooking:['Evidence of controlled fire goes back hundreds of thousands of years.','Cooking makes some foods easier to digest and some nutrients easier to absorb.'],
+rainbow:['In a double rainbow, the outer arc has its colours in reverse order.','No two people see exactly the same rainbow, because it depends on where you stand.'],
+glass:['Glass is made mostly from melted sand.','Roman glassmakers were already making colourful glass vessels around two thousand years ago.'],
+chili:['Capsaicin heat is measured on the Scoville scale.','Chillies come originally from the Americas.'],
+gps:['GPS needs signals from at least four satellites to work out where you are.','About thirty GPS satellites orbit roughly 20,000 kilometres up.'],
+honey:['Bees fan honey with their wings to thicken it.','Bees turn nectar into honey by passing it mouth to mouth.'],
+ants:['Some ant colonies have millions of ants.','Ants can carry many times their own body weight.'],
+microbes:['Your gut microbes help make some vitamins.','Most of the microbes on you are harmless or helpful.'],
+colour:['The blue morpho butterfly looks blue because of tiny ridges on its wings, not pigment.','Peacock feathers also get much of their colour from structure.'],
+saturn:['Saturn’s rings are mostly ice, from dust specks to boulders.','A day on Saturn is about ten and a half hours long.']};
+const bits=id=>M[id]?'<p class="src"><b>More weird bits 🥕</b></p><ul class="bits">'+M[id].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'';
+const HOP=['Ooh, good one. I smell carrots. Pick a tunnel!','Wait until you see where this goes...','We are already far from where we started. Keep digging!','Hop number four. You are officially a Rabbithole person.','I only meant to look up one thing too.'];
+const S={trail:[],carrots:0,seen:new Set(),deep:false,dug:new Set(),lives:3,fox:true,asked:new Set(),met:false,ft:null,ct:null,q:null};
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,3200)}
+function start(msg){
+  S.trail=[];$('sheet').hidden=true;clearTimeout(S.ft);
+  $('app').innerHTML=`<div class="hero"><div class="bun" aria-hidden="true">🐇</div>
+  <h1>Ask one thing.<br>Fall down five.</h1>
+  <p class="sub" id="msg"></p>
+  <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
+  <div class="chips">${['cats','volcanoes','octopuses','cheese','rainbows','bats'].map(c=>`<button class="chip" data-q="${c}">${c}</button>`).join('')}</div></div>`;
+  $('msg').textContent=msg||'Beware the Fox. He quizzes bunnies who wander too far.';
+  $('f').onsubmit=e=>{e.preventDefault();go($('q').value)};
+}
+function find(q){q=q.toLowerCase();return Object.keys(N).find(id=>N[id].k.split(' ').some(w=>w.length>3?q.includes(w):new RegExp('\\b'+w+'(s|es)?\\b').test(q)))}
+function go(q){q=(q||'').trim();if(!q)return;if(rude(q))return start(nextRude());const id=find(q);if(!id)return unknown(q);S.trail=[id];S.deep=false;render()}
+function options(){
+  const cur=S.trail[S.trail.length-1];
+  let o=N[cur].n.filter(([i])=>!S.trail.includes(i));o.sort(()=>Math.random()-.5);
+  Object.keys(N).filter(i=>!S.trail.includes(i)&&!o.some(x=>x[0]===i)).forEach(i=>{if(o.length<3)o.push([i,'Wildcard tunnel: Bunny\'s nose says dig here.'])});
+  return o.slice(0,3);
+}
+function render(keep){
+  const id=S.trail[S.trail.length-1],n=N[id],hops=S.trail.length-1;
+  $('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;
+  const trail=S.trail.map(i=>`<b>${N[i].e} ${N[i].t}</b>`).join(' 🥕 ');
+  $('app').innerHTML=`<div class="bubble"><span aria-hidden="true">🐇</span><span>${HOP[Math.min(hops,HOP.length-1)]}</span></div>
+  <div class="trail" aria-label="Your journey so far">${trail}</div>
+  <section class="reveal"><div class="big" aria-hidden="true">${n.e}</div><h2>${n.t}</h2><p class="hook">${lk(H[id]||n.f)}</p><div class="acts2">${S.deep?'':'<button class="deeper" data-deeper="1">Dig deeper 🕳️</button>'}<a class="wiki" href="${wiki(n)}" target="_blank" rel="noopener noreferrer">📖 Read more ↗</a></div>${S.deep?`<div class="more"><p>${lk(n.d)}</p>${bits(id)}<p class="src">Source: ${n.s}</p></div>`:''}${hops===0?'<p class="src">Psst: the wiggly-underlined words are tunnels too. Tap one!</p>':''}</section>
+  <h3 class="next">🐇 Where next?</h3>
+  ${options().map(([i,w])=>`<article class="card"><h3>${N[i].e} ${N[i].t}</h3>
+  <p class="hook">${lk(H[i]||N[i].f)}</p><p class="why"><b>Why this hop?</b> ${w}</p>
+  <button class="dig" data-go="${i}">Go down this hole →</button></article>`).join('')}`;
+  if(!keep)window.scrollTo({top:0,behavior:'smooth'});foxSchedule(keep);
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.a)return done(b.dataset.a===S.q,false);
+  if(b.dataset.fox==='close'){$('fox').hidden=true;return}
+  if(b.dataset.fox==='reset'){$('fox').hidden=true;S.lives=3;S.carrots=0;S.asked.clear();$('carrots').textContent='🥕 0';$('lives').textContent='🐇🐇🐇';return start()}
+  if(b.id==='foxbtn'){S.fox=!S.fox;b.textContent=S.fox?'🦊 on':'🦊 off';b.setAttribute('aria-pressed',S.fox);if(!S.fox)clearTimeout(S.ft);return}
+  if(b.dataset.close)$('sheet').hidden=true;
+  if(b.dataset.w)return openWord(b.dataset.w);
+  if(b.id==='home')return start();
+  if(b.dataset.q)return go(b.dataset.q);
+  if(b.dataset.deeper){S.deep=true;const c=S.trail[S.trail.length-1];if(!S.dug.has(c)){S.dug.add(c);S.carrots++}return render(1)}
+  if(b.dataset.go){S.trail.push(b.dataset.go);S.carrots++;S.deep=false;render();
+    if(S.trail.length===4)toast('🥕 Past the three-hop test! The tunnel has you.');}
+});
+
+const INTRO=['Well, well. A tasty-looking bunny.','Pop quiz, fluffball. Wrong answers are delicious.','Psst. Been paying attention? I hope not.','Nice trail you left. Very easy to follow.'];
+const FIRST='Hello, little bunny. I am Fox. Answer right or I eat you. (Shoo me with the 🦊 button up top if I am too much.)';
+const WIN=['Hmph. Lucky bunny.','Curses! Foiled by facts.','Fine. You may live. For now.'];
+const LOSE=['CHOMP! Tastes like carrots.','Nom nom nom. Not paying attention is delicious.','Gulp! Better luck next life.'];
+const pick1=a=>a[Math.floor(Math.random()*a.length)];
+const sent=id=>{const t=String(H[id]||N[id].f).replace(/\{\{[^|]+\|([^}]+)\}\}/g,'$1');const m=t.match(/^.*?[.!?](?=\s)/);return m?m[0]:t};
+function foxSchedule(keep){
+  $('lives').hidden=false;$('lives').textContent='🐇'.repeat(Math.max(S.lives,0))||'💀';
+  if(keep)return;clearTimeout(S.ft);
+  if(!S.fox||S.trail.length<2||Math.random()<.1)return;
+  S.ft=setTimeout(attack,3000+Math.random()*5000);
+}
+function attack(){
+  if(!S.fox||!S.trail.length)return;
+  if(!$('sheet').hidden){S.ft=setTimeout(attack,3000);return}
+  let pool=S.trail.filter(i=>!S.asked.has(i));if(!pool.length){S.asked.clear();pool=S.trail.slice()}
+  const id=pick1(pool);S.asked.add(id);S.q=id;
+  const others=Object.keys(N).filter(i=>i!==id).sort(()=>Math.random()-.5).slice(0,2);
+  const opts=[id,...others].sort(()=>Math.random()-.5);
+  const say=S.met?pick1(INTRO):FIRST;S.met=true;
+  $('fox').innerHTML=`<div class="fbox"><div class="face">🦊</div><p class="fsay">${say}</p><h3 id="fq">Which of these did you read under ${N[id].e} ${N[id].t}?</h3><div class="bar"><i id="bar"></i></div>${opts.map(o=>`<button class="opt" data-a="${o}">${sent(o)}</button>`).join('')}</div>`;
+  $('fox').hidden=false;
+  const bar=$('bar');requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.transition='width 20s linear';bar.style.width='0'}));
+  clearTimeout(S.ct);S.ct=setTimeout(()=>done(false,true),20000);
+  $('fox').querySelector('.opt').focus();
+}
+function done(ok,late){
+  clearTimeout(S.ct);let h;
+  if(ok){S.carrots+=2;h=`<div class="face">🦊💢</div><p class="fsay">${pick1(WIN)}</p><p class="fsay">Correct! +2 🥕</p><button class="dig" data-fox="close">Phew. Back to the tunnels</button>`}
+  else{S.lives--;S.carrots=Math.max(0,S.carrots-2);const over=S.lives<=0;
+    h=`<div class="face">${over?'💀':'🦊<span class="nom">nom nom nom</span>'}</div><p class="fsay">${late?'Too slow! ':''}${pick1(LOSE)}</p><p>The right one: ${sent(S.q)}</p>${over?'<p class="fsay">Eaten three times. Back to the burrow with you.</p><button class="dig" data-fox="reset">Dig again</button>':'<p class="fsay">−2 🥕 and a life lost</p><button class="dig" data-fox="close">Ouch. Carry on</button>'}`}
+  $('fox').innerHTML=`<div class="fbox">${h}</div>`;
+  $('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;$('lives').textContent='🐇'.repeat(Math.max(S.lives,0))||'💀';
+  $('fox').querySelector('button').focus();
+}
+document.addEventListener('click',e=>{if(e.target.closest('a.wiki'))S.away=true});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.away){S.away=false;S.carrots++;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;toast('🐇 Welcome back! Your trail is right where you left it. +1 🥕')}});
+start();
+</script>
+</body>
+</html>
