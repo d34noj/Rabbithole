@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rabbithole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700&display=swap">
+<style>
+:root{--bg:#d9f1ff;--ink:#231f4a;--panel:#ffffff;--muted:#5b5788;--soil:#8a5a3c;--carrot:#ff8a1f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1838;--ink:#f3f0ff;--panel:#2b2758;--muted:#b9b3ee}}
+:root[data-theme="dark"]{--bg:#1b1838;--ink:#f3f0ff;--panel:#2b2758;--muted:#b9b3ee}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.5 Nunito,system-ui,sans-serif;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:18px 16px 60px}
+h1,h2,h3,button,.pill{font-family:Fredoka,"Trebuchet MS",sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.logo{font:700 24px Fredoka,sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px}
+.pill{background:var(--panel);border-radius:999px;padding:4px 12px;font-weight:600;font-size:15px}
+.hero{text-align:center;padding:28px 0 10px}
+.bun{font-size:84px;display:inline-block;animation:hop 1.6s ease-in-out infinite;transform-origin:bottom}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}25%{transform:translateY(-22px) rotate(-6deg)}}
+@media (prefers-reduced-motion:reduce){.bun{animation:none}}
+h1{font-size:clamp(34px,9vw,52px);line-height:1.05;margin:6px 0 8px}
+.sub{color:var(--muted);margin:0 auto 20px;max-width:30ch}
+form{display:flex;gap:8px;background:var(--panel);padding:8px;border-radius:999px;box-shadow:0 6px 0 var(--carrot)}
+input{flex:1;min-width:0;border:0;background:none;font:600 18px Nunito,sans-serif;color:var(--ink);padding:8px 14px;outline:none}
+button{cursor:pointer;border:0;font-weight:600}
+.go{background:var(--carrot);color:#231f4a;border-radius:999px;padding:10px 18px;font-size:17px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--carrot);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.chip{background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:16px}
+.bubble{background:var(--panel);border-radius:20px 20px 20px 4px;padding:10px 14px;margin:16px 0;display:flex;gap:10px;align-items:center}
+.bubble span:first-child{font-size:30px}
+.trail{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin:14px 0;font-size:15px;color:var(--muted)}
+.trail b{background:var(--panel);color:var(--ink);border-radius:999px;padding:2px 10px;font-weight:700}
+.reveal{background:var(--panel);border-radius:26px;padding:20px;border-bottom:8px solid var(--soil)}
+.reveal .big{font-size:56px;line-height:1}
+h2{font-size:30px;margin:6px 0 8px}
+.src{color:var(--muted);font-size:14px;margin:8px 0 0}
+h3.next{font-size:22px;margin:26px 0 10px}
+.card{border-radius:24px;padding:16px 18px 18px;margin:0 0 14px;color:#231f4a}
+.card:nth-of-type(3n+1){background:#ff9fca;transform:rotate(-.6deg)}
+.card:nth-of-type(3n+2){background:#8fd4ff;transform:rotate(.5deg)}
+.card:nth-of-type(3n){background:#c3f570;transform:rotate(-.3deg)}
+.card h3{font-size:24px;margin:0 0 6px}
+.card p{margin:0 0 8px}
+.fact{background:rgba(255,255,255,.6);border-radius:14px;padding:10px 12px}
+.why{font-size:15px}
+.dig{background:#231f4a;color:#fff;border-radius:999px;padding:10px 16px;font-size:16px;width:100%;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--carrot);color:#231f4a;font:600 16px Fredoka,sans-serif;border-radius:999px;padding:10px 18px;width:max-content;max-width:92vw;text-align:center}
+[hidden]{display:none!important}
+.word{background:none;border:0;padding:0;font:inherit;font-weight:700;color:inherit;cursor:pointer;-webkit-text-decoration:underline wavy var(--carrot);text-decoration:underline wavy var(--carrot);text-underline-offset:4px;text-decoration-thickness:2px}
+.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;background:#ffe66d;color:#231f4a;border-radius:26px 26px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 0 var(--carrot);animation:up .25s ease-out;z-index:5}
+.sheet h3{font-size:24px;margin:0 0 6px}.sheet p{margin:0 0 12px}
+.sheet .row{display:flex;flex-direction:column;gap:8px}
+.shut{background:rgba(35,31,74,.12);color:#231f4a;border-radius:999px;padding:10px 16px;font-size:16px}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}}
+.hook{font:600 19px/1.35 Nunito,sans-serif;margin:0 0 8px}
+.reveal .hook{font-size:21px}
+.deeper{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px}
+.more{border-top:2px dashed var(--muted);margin-top:10px;padding-top:10px}
+.pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+button.pill{border:0;color:var(--ink);cursor:pointer}
+.fox{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(20,10,40,.82);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}
+.fbox{background:#ffb55e;color:#231f4a;border-radius:28px;padding:20px;max-width:520px;width:100%;box-shadow:0 8px 0 #c4561a}
+.face{font-size:72px;line-height:1;text-align:center;animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(-6deg) scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.face{animation:none}}
+.fsay{font:600 18px/1.3 Fredoka,sans-serif;text-align:center;margin:8px 0}
+.fbox h3{font-size:20px;margin:6px 0 10px}
+.bar{height:10px;border-radius:99px;background:rgba(35,31,74,.2);overflow:hidden;margin-bottom:10px}
+.bar i{display:block;height:100%;width:100%;background:#c4561a}
+.opt{display:block;width:100%;text-align:left;background:#fff;color:#231f4a;border-radius:16px;padding:12px 14px;margin:8px 0;font:600 16px/1.35 Nunito,sans-serif}
+.nom{display:block;font:700 24px Fredoka,sans-serif;margin-top:6px}
+.weblink{display:inline-block;background:var(--carrot);color:#231f4a;border-radius:999px;padding:10px 18px;font:600 17px Fredoka,sans-serif;text-decoration:none;margin-top:14px}
+.acts2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+a.wiki{border:2px solid var(--ink);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 16px Fredoka,sans-serif;text-decoration:none}
+.bits{margin:4px 0 8px;padding-left:20px}
+.bits li{margin:4px 0}
+html{-webkit-text-size-adjust:100%}
+button,input{-webkit-appearance:none;appearance:none}
+input{border-radius:0;-webkit-tap-highlight-color:transparent}
+button,a{-webkit-tap-highlight-color:transparent}
+a.ws{color:inherit;font-size:14px}
+
+html{background:#7fd0ff}
+body{background:transparent}
+#earth{position:fixed;top:0;right:0;bottom:0;left:0;z-index:-2;pointer-events:none;background-size:100% 800vh;background-position:0 0;transition:background-position-y 1.8s ease;
+background-image:linear-gradient(to bottom,#7fd0ff 0%,#d4f1ff 10.8%,#62c254 11%,#3f8f37 12.4%,#8d5c38 12.5%,#7a4a2d 24.9%,#77472b 25%,#5f361e 37.4%,#6e3b28 37.5%,#55291d 49.9%,#4f4541 50%,#3d3634 62.4%,#3b3846 62.5%,#2a2834 74.9%,#29272f 75%,#1b1a24 87.4%,#1d1b26 87.5%,#3a0f08 100%)}
+#specks{position:fixed;top:0;right:0;bottom:0;left:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.2s;
+background-image:radial-gradient(circle at 20% 30%,rgba(0,0,0,.35) 0 2px,transparent 3px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.14) 0 2px,transparent 3px),radial-gradient(circle at 45% 82%,rgba(0,0,0,.28) 0 1.5px,transparent 2.5px);background-size:46px 46px,67px 67px,31px 31px}
+.under #specks{opacity:.6}
+body,.reveal,.bubble,.pill,.chip,form,.trail b{transition:background-color 1s,color 1s}
+.toast{z-index:10}
+.crit{position:fixed;z-index:6;border:0;background:none;padding:0;cursor:pointer}
+.crit.mole{bottom:0;animation:peek 3.4s ease-in-out forwards}
+.crit.worm{left:-90px;animation:crawl 9s linear forwards}
+.crit.worm svg{animation:wig .5s ease-in-out infinite alternate}
+@keyframes peek{0%{transform:translateY(110%)}18%,78%{transform:translateY(8%)}100%{transform:translateY(110%)}}
+@keyframes crawl{to{transform:translateX(calc(100vw + 180px))}}
+@keyframes wig{from{transform:skewY(-7deg) scaleX(.95)}to{transform:skewY(7deg) scaleX(1.05)}}
+@media (prefers-reduced-motion:reduce){#earth{transition:none}.crit{display:none}}
+</style>
+</head>
+<body>
+<div id="earth" aria-hidden="true"></div><div id="specks" aria-hidden="true"></div>
+<main>
+  <div class="top">
+    <button class="logo" id="home" aria-label="Back to start">🐇 Rabbithole</button>
+    <div class="pills"><span class="pill" id="layer" hidden></span><span class="pill" id="lives" hidden></span><span class="pill" id="carrots" hidden>🥕 0</span><button class="pill" id="foxbtn" aria-pressed="true">🦊 on</button></div>
+  </div>
+  <div id="app"></div>
+</main>
+<aside class="sheet" id="sheet" hidden></aside>
+<div class="fox" id="fox" role="dialog" aria-modal="true" aria-labelledby="fq" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>a.slice().sort(()=>Math.random()-.5);
+const re=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const S={trail:[],cur:null,carrots:0,lives:3,fox:true,met:false,asked:new Set(),pool:[],deep:false,away:false,q:'',ft:null,ct:null,tok:0,fq:null,fopts:[]};
+const LAYERS=['Surface','Topsoil','Subsoil','Clay','Gravel','Bedrock','Deep rock','Earth’s core 🔥'];
+const TOK=[{ink:'#231f4a',muted:'#4a4680',panel:'#ffffff'},{ink:'#fff4e5',muted:'#ead7c0',panel:'rgba(28,14,8,.62)'},{ink:'#f2eefc',muted:'#cbc6e8',panel:'rgba(10,8,18,.64)'}];
+let layer=0;
+function earth(h){
+  const d=h==null?0:(h===0?1:Math.min(7,1+h*.5)),idx=Math.floor(d),t=idx===0?TOK[0]:idx<5?TOK[1]:TOK[2],st=document.documentElement.style;
+  $('earth').style.backgroundPositionY=(d/7*100)+'%';
+  st.setProperty('--ink',t.ink);st.setProperty('--muted',t.muted);st.setProperty('--panel',t.panel);
+  document.body.classList.toggle('under',idx>0);
+  $('layer').hidden=idx===0;$('layer').textContent='⬇ '+LAYERS[idx];
+  if(idx>layer&&idx>=2)toast('🕳️ You have reached the '+LAYERS[idx]+'...');
+  layer=idx;
+}
+const MOLE='<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><ellipse cx="40" cy="48" rx="22" ry="20" fill="#5b4a47"/><circle cx="40" cy="58" r="5.5" fill="#ff8aa8"/><circle cx="31" cy="45" r="3" fill="#fff"/><circle cx="49" cy="45" r="3" fill="#fff"/><circle cx="31.5" cy="45.5" r="1.4" fill="#231f4a"/><circle cx="49.5" cy="45.5" r="1.4" fill="#231f4a"/><ellipse cx="20" cy="66" rx="7" ry="5" fill="#f2a0b0"/><ellipse cx="60" cy="66" rx="7" ry="5" fill="#f2a0b0"/><path d="M0 80 Q40 62 80 80Z" fill="#3b2417"/></svg>';
+const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/><circle cx="67" cy="10" r="1.8" fill="#231f4a"/></svg>';
+function spawn(){
+  const mole=Math.random()<.5,el=document.createElement('button');
+  el.className='crit '+(mole?'mole':'worm');el.setAttribute('aria-label',mole?'A mole':'A worm');el.innerHTML=mole?MOLE:WORM;
+  if(mole)el.style.left=(8+Math.random()*72)+'%';else el.style.top=(12+Math.random()*70)+'%';
+  el.onclick=()=>{S.carrots++;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;toast(mole?'🥕 +1! You befriended a mole.':'🥕 +1! A worm says hi.');el.remove()};
+  document.body.appendChild(el);setTimeout(()=>el.remove(),mole?3600:9000);
+}
+function critter(){setTimeout(()=>{if(layer>=1&&!document.hidden)spawn();critter()},7000+Math.random()*12000)}
+const SEEDS=['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Pizza','Volcano','Lightning','Aurora','Solar eclipse','Rainbow','Glacier','Black hole','Moon','Saturn','Telescope','Printing press','Bicycle','Zipper','Velcro','Chess','Origami','Piano','Lighthouse','Submarine','Great Wall of China','Alan Turing','Enigma machine','Dinosaur','Woolly mammoth','Stonehenge','Bermuda Triangle','Loch Ness Monster','Rubik\'s Cube','Bioluminescence','Quicksand','Sundial','Typewriter','Mount Everest','Great Pyramid of Giza'];
+const BAD=/\b(fuck\w*|shit\w*|bullshit|bitch\w*|bastard\w*|asshole\w*|arsehole\w*|dick(head)?s?|pussy|pussies|cunt\w*|wank\w*|twat\w*|whore\w*|slut\w*|porn\w*|xxx|nudes?|nsfw|hentai|erotic\w*|milf|nigg\w*|fag(got)?s?|retard\w*|cocks?|tits?|boobs?|sex|sexy|sexual|prostitut\w*)\b/i;
+const DARK=/\b(suicide|murder\w*|massacre|genocide|rape\w*|terroris\w*|holocaust|torture|abuse|slavery|serial killer|execution|shooting|assassin\w*)\b/i;
+const BADT=/^(List of|Lists of|Index of|Outline of|Timeline of|Glossary of|Template|Category|Help|Wikipedia|Portal|File|Draft|ISO |ISBN|Doi|PMID|S2CID|Bibcode|OCLC)|^\d|:|disambiguation|\(identifier\)/i;
+const GEN=/^(United States|United Kingdom|France|Germany|Italy|Spain|China|India|Japan|Russia|Europe|Asia|Africa|Latin|English language|Greek language)$/;
+const rude=t=>{const n=t.toLowerCase().replace(/[@4]/g,'a').replace(/[$5]/g,'s').replace(/0/g,'o').replace(/[1!|]/g,'i').replace(/3/g,'e');return BAD.test(t)||BAD.test(n)};
+const RUDE=['Do you kiss your mother with that mouth? 🐇','Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Somebody woke up on the wrong side of the burrow.','Bunny is covering his ears. La la la, not listening!','Granny Bunny just dropped her knitting. Try again, politely!','Is that how you talk at the dinner table? The carrots are blushing.','Mind your whiskers! This is a nice burrow.','Hop it! That kind of word never got anyone down a rabbit hole.','Gasp! I am telling the Owl on you.'];
+let rudeDeck=[],lastRude='';
+const nextRude=()=>{if(!rudeDeck.length){rudeDeck=shuf(RUDE);if(rudeDeck[rudeDeck.length-1]===lastRude)rudeDeck.unshift(rudeDeck.pop())}return lastRude=rudeDeck.pop()};
+const HOP=['Ooh, good one. I smell carrots. Pick a tunnel!','Wait until you see where this goes...','We are already far from where we started. Keep digging!','Hop number four. You are officially a Rabbithole person.','I only meant to look up one thing too.'];
+const DIG=['Digging...','Sniffing out carrots...','Asking a mole for directions...','Consulting a very old rabbit...','Wiggling nose. Nearly there...'];
+const Q=['So how did that end up linked to X?','What is that doing near X?','And what does that have to do with X?'];
+const toast=m=>{const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,3200)};
+const short=(s,n)=>s.length<=n?s:s.slice(0,n).replace(/\s+\S*$/,'')+'…';
+const clean=t=>t.replace(/\s*\([^)]*\)/g,'').replace(/\[\d+\]/g,'').replace(/\s+/g,' ').trim();
+const sents=t=>(clean(t).match(/[^.!?]+[.!?]+(?=\s|$)/g)||[clean(t)]).map(x=>x.trim());
+const base=t=>t.replace(/\s*\(.*\)$/,'');
+const wurl=t=>'https://en.wikipedia.org/wiki/'+encodeURIComponent(t.replace(/ /g,'_'));
+async function api(p){const r=await fetch('https://en.wikipedia.org/w/api.php?'+new URLSearchParams(Object.assign({format:'json',formatversion:'2',origin:'*'},p)));if(!r.ok)throw new Error('http');return r.json()}
+const isDis=p=>p.pageprops&&'disambiguation' in p.pageprops;
+async function resolve(q){
+  const c=[q,q.replace(/ies$/i,'y'),q.replace(/(es|s)$/i,'')].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  for(const t of c){const d=await api({action:'query',titles:t,redirects:1,prop:'pageprops',ppprop:'disambiguation'});const p=d.query.pages[0];if(p&&!p.missing&&!isDis(p))return p.title}
+  const d=await api({action:'query',generator:'search',gsrsearch:q,gsrlimit:5,gsrnamespace:0,prop:'pageprops',ppprop:'disambiguation'});
+  const ps=((d.query&&d.query.pages)||[]).filter(p=>!isDis(p)).sort((a,b)=>a.index-b.index);
+  return ps.length?ps[0].title:null;
+}
+async function topic(title){
+  const d=await api({action:'query',titles:title,redirects:1,prop:'extracts|links|description',explaintext:1,pllimit:'max',plnamespace:0});
+  const p=d.query.pages[0];if(!p||p.missing||!p.extract)throw new Error('missing');
+  const all=p.extract.split('\n').map(x=>x.trim()).filter(x=>x&&!/^==/.test(x)).flatMap(sents).filter(x=>x.length>25);
+  const src=p.title,seen=new Set(S.trail.map(x=>x.title));
+  const links=shuf((p.links||[]).map(l=>l.title).filter(t=>t!==src&&!seen.has(t)&&!BADT.test(t)&&!GEN.test(t)&&!DARK.test(t)&&!BAD.test(t)));
+  let items=[];const pick=links.slice(0,16);
+  if(pick.length){
+    const e=await api({action:'query',titles:pick.join('|'),redirects:1,prop:'extracts|pageprops|description',exintro:1,explaintext:1,exlimit:'max',exsentences:3,ppprop:'disambiguation'});
+    items=((e.query&&e.query.pages)||[]).filter(x=>x.title!==src&&!seen.has(x.title)&&x.extract&&x.extract.length>80&&!isDis(x)&&!/may refer to/.test(x.extract)&&!DARK.test(x.title+' '+x.extract)&&!BAD.test(x.title+' '+x.extract)).map(x=>{
+      const k=base(x.title).toLowerCase(),b=all.find(s=>s.toLowerCase().includes(k));
+      return {title:x.title,desc:x.description||'',first:short(sents(x.extract)[0]||'',220),bridge:b||'',score:(b?1:0)+Math.random()};
+    });
+  }
+  items.sort((a,b)=>b.score-a.score);
+  const out=[],used=new Set();
+  for(const i of items){const k=(i.desc||i.title).split(' ').pop().toLowerCase();if(used.has(k))continue;used.add(k);out.push(i);if(out.length===3)break}
+  for(const i of items){if(out.length>=3)break;if(!out.includes(i))out.push(i)}
+  const hook=short(all.slice(0,2).join(' '),300),deep=short(all.slice(2,6).join(' '),600),txt=hook+' '+deep;
+  let words=links.filter(t=>!out.some(o=>o.title===t)&&new RegExp('\\b'+re(t)+'\\b').test(txt)).slice(0,3);
+  words=words.filter(w=>!words.some(o=>o!==w&&o.includes(w)));
+  return {title:src,desc:p.description||'',hook,deep,words,first:short(all[0]||'',200),next:out};
+}
+function lk(text,words){let h=esc(text);(words||[]).forEach(w=>{h=h.replace(new RegExp('\\b'+re(esc(w))+'\\b'),`<button class="word" data-t="${esc(w)}">${esc(w)}</button>`)});return h}
+const trailHtml=()=>'<div class="trail" aria-label="Your journey so far">'+S.trail.map(x=>`<b>${esc(x.title)}</b>`).join(' 🥕 ')+'</div>';
+const seeds=()=>shuf(SEEDS).slice(0,6).map(t=>`<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')+'<button class="chip" data-shuf="1">🎲 Shuffle</button>';
+function start(msg){
+  clearTimeout(S.ft);clearTimeout(S.ct);S.tok++;S.trail=[];S.cur=null;S.pool=[];$('sheet').hidden=true;$('fox').hidden=true;earth(null);
+  $('app').innerHTML=`<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" id="msg"></p>
+  <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
+  <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
+  $('msg').textContent=msg||'Beware the Fox. He quizzes bunnies who wander too far.';
+  $('f').onsubmit=e=>{e.preventDefault();go($('q').value)};
+}
+function unknown(q){
+  start('Bunny has not dug a tunnel for that one yet!');
+  $('wl').innerHTML=`<a class="weblink" href="https://duckduckgo.com/?kp=1&q=${encodeURIComponent(q)}" target="_blank" rel="noopener noreferrer">🔎 Search the web for “${esc(q)}”</a>`;
+  $('q').value=q;
+}
+async function go(q){
+  q=(q||'').trim();if(!q)return;
+  if(rude(q))return start(nextRude());
+  S.q=q;S.trail=[];S.pool=[];const tok=++S.tok;
+  $('app').innerHTML='<div class="bubble"><span aria-hidden="true">🐇</span><span>Looking for a tunnel...</span></div>';
+  try{const t=await resolve(q);if(tok!==S.tok)return;if(!t)return unknown(q);S.trail=[{title:t}];load()}catch(e){fail()}
+}
+function dig(t){S.carrots++;S.trail.push({title:t});load()}
+function fail(){$('app').innerHTML=(S.trail.length?trailHtml():'')+`<div class="bubble"><span aria-hidden="true">🐇</span><span>The tunnel collapsed! Check your connection and try again?</span></div><button class="dig" data-retry="1">Try again</button><button class="shut" style="margin-top:8px;width:100%" data-home="1">Start over</button>`}
+async function load(){
+  const tok=++S.tok,cur=S.trail[S.trail.length-1];S.deep=false;let i=0;clearTimeout(S.ft);
+  $('app').innerHTML=(S.trail.length?trailHtml():'')+`<div class="bubble"><span aria-hidden="true">🐇</span><span id="dig">${DIG[0]}</span></div>`;
+  const tk=setInterval(()=>{const d=$('dig');if(d)d.textContent=DIG[++i%DIG.length]},1800);
+  try{
+    const n=await topic(cur.title);clearInterval(tk);if(tok!==S.tok)return;
+    cur.title=n.title;cur.first=n.first;S.cur=n;
+    n.next.forEach(x=>S.pool.push({title:x.title,first:x.first}));
+    render();
+  }catch(e){clearInterval(tk);if(tok===S.tok)fail()}
+}
+const DULL=['Bored? Some stuff is just boring, and that is your own fault for searching for boring stuff. May I recommend ‘{X}’ instead of your dull search?','Meh? That is what you get for searching boring things. May I suggest ‘{X}’ instead?','Yawn. Your own fault for picking something dull! Try ‘{X}’ instead.','If that was a snooze, do not blame the Bunny. May I recommend ‘{X}’?'];
+function bored(){const seen=S.trail.map(x=>x.title),x=rnd(SEEDS.filter(t=>!seen.includes(t)));return `<div class="bubble"><span aria-hidden="true">🐇</span><span>${rnd(DULL).replace('{X}',esc(x))}</span></div><button class="chip" data-q="${esc(x)}">🎲 Try ${esc(x)} instead</button>`}
+function render(keep){
+  const n=S.cur,hops=S.trail.length-1;earth(hops);
+  $('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;$('lives').hidden=false;$('lives').textContent='🐇'.repeat(Math.max(S.lives,0))||'💀';
+  $('app').innerHTML=`<div class="bubble"><span aria-hidden="true">🐇</span><span>${HOP[Math.min(hops,HOP.length-1)]}</span></div>${trailHtml()}
+  <section class="reveal">${n.desc?`<p class="src">${esc(n.desc)}</p>`:''}<h2>${esc(n.title)}</h2><p class="hook">${lk(n.hook,n.words)}</p>
+  <div class="acts2">${S.deep?'':'<button class="deeper" data-deeper="1">Dig deeper 🕳️</button>'}<a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Read more ↗</a></div>
+  ${S.deep?`<div class="more"><p>${lk(n.deep,n.words)}</p><p class="src">From Wikipedia (CC BY-SA)</p></div>`:''}
+  ${hops===0&&S.q?`<p class="src"><a class="ws" href="https://duckduckgo.com/?kp=1&q=${encodeURIComponent(S.q)}" target="_blank" rel="noopener noreferrer">🔎 Not what you meant? Search the web for “${esc(S.q)}”</a></p>`:''}</section>
+  <h3 class="next">🐇 Where next?</h3>
+  ${n.next.length?n.next.map((x,i)=>`<article class="card"><h3>${esc(x.title)}</h3><p class="hook">${esc(x.first)} ${rnd(Q).replace('X',esc(base(n.title)))}</p><p class="why"><b>Why this hop?</b> ${x.bridge?'“'+esc(short(x.bridge,170))+'”':'The '+esc(base(n.title))+' article links straight to it.'}</p><button class="dig" data-i="${i}">Go down this hole →</button></article>`).join(''):'<div class="bubble"><span aria-hidden="true">🐇</span><span>Hmm. I could not find a good tunnel from here. Try the search bar!</span></div>'}${bored()}`;
+  if(!keep)window.scrollTo({top:0,behavior:'smooth'});
+  foxSchedule(keep);
+}
+const INTRO=['Well, well. A tasty-looking bunny.','Pop quiz, fluffball. Wrong answers are delicious.','Psst. Been paying attention? I hope not.','Nice trail you left. Very easy to follow.'];
+const FIRST='Hello, little bunny. I am Fox. Answer right or I eat you. (Shoo me with the 🦊 button up top if I am too much.)';
+const WIN=['Hmph. Lucky bunny.','Curses! Foiled by facts.','Fine. You may live. For now.'];
+const LOSE=['CHOMP! Tastes like carrots.','Nom nom nom. Not paying attention is delicious.','Gulp! Better luck next life.'];
+const mask=(s,t)=>s.replace(new RegExp(re(base(t)),'ig'),'____');
+function foxSchedule(keep){
+  if(keep)return;clearTimeout(S.ft);
+  if(!S.fox||S.trail.length<2||Math.random()<.1)return;
+  S.ft=setTimeout(attack,3000+Math.random()*5000);
+}
+function attack(){
+  if(!S.fox)return;
+  let pool=S.trail.filter(t=>t.first&&!S.asked.has(t.title));if(!pool.length){S.asked.clear();pool=S.trail.filter(t=>t.first)}
+  const t=rnd(pool),wrong=shuf(S.pool.filter(p=>p.first&&!S.trail.some(x=>x.title===p.title))).slice(0,2);
+  if(!t||wrong.length<2)return;
+  S.asked.add(t.title);S.fq=t;
+  S.fopts=shuf([{title:t.title,first:t.first,ok:1}].concat(wrong));
+  const say=S.met?rnd(INTRO):FIRST;S.met=true;
+  $('fox').innerHTML=`<div class="fbox"><div class="face">🦊</div><p class="fsay">${say}</p><h3 id="fq">Which of these did you read under ${esc(t.title)}?</h3><div class="bar"><i id="bar"></i></div>${S.fopts.map((o,i)=>`<button class="opt" data-a="${i}">${esc(mask(o.first,o.title))}</button>`).join('')}</div>`;
+  $('fox').hidden=false;
+  const bar=$('bar');requestAnimationFrame(()=>requestAnimationFrame(()=>{bar.style.transition='width 20s linear';bar.style.width='0'}));
+  clearTimeout(S.ct);S.ct=setTimeout(()=>done(false,true),20000);
+  $('fox').querySelector('.opt').focus();
+}
+function done(ok,late){
+  clearTimeout(S.ct);let h;
+  if(ok){S.carrots+=2;h=`<div class="face">🦊💢</div><p class="fsay">${rnd(WIN)}</p><p class="fsay">Correct! +2 🥕</p><button class="dig" data-fox="close">Phew. Back to the tunnels</button>`}
+  else{S.lives--;S.carrots=Math.max(0,S.carrots-2);const over=S.lives<=0;
+    h=`<div class="face">${over?'💀':'🦊<span class="nom">nom nom nom</span>'}</div><p class="fsay">${late?'Too slow! ':''}${rnd(LOSE)}</p><p>The right one: ${esc(S.fq.first)}</p>${over?'<p class="fsay">Eaten three times. Back to the burrow with you.</p><button class="dig" data-fox="reset">Dig again</button>':'<p class="fsay">−2 🥕 and a life lost</p><button class="dig" data-fox="close">Ouch. Carry on</button>'}`}
+  $('fox').innerHTML=`<div class="fbox">${h}</div>`;
+  $('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;$('lives').textContent='🐇'.repeat(Math.max(S.lives,0))||'💀';
+  $('fox').querySelector('button').focus();
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('a.wiki'))S.away=true;
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.a)return done(!!S.fopts[+b.dataset.a].ok,false);
+  if(b.dataset.fox==='close'){$('fox').hidden=true;return}
+  if(b.dataset.fox==='reset'){$('fox').hidden=true;S.lives=3;S.carrots=0;S.asked.clear();return start()}
+  if(b.id==='foxbtn'){S.fox=!S.fox;b.textContent=S.fox?'🦊 on':'🦊 off';b.setAttribute('aria-pressed',S.fox);if(!S.fox)clearTimeout(S.ft);return}
+  if(b.id==='home'||b.dataset.home)return start();
+  if(b.dataset.shuf){$('seeds').innerHTML=seeds();return}
+  if(b.dataset.q)return go(b.dataset.q);
+  if(b.dataset.retry)return S.trail.length?load():start();
+  if(b.dataset.t)return dig(b.dataset.t);
+  if(b.dataset.deeper){S.deep=true;if(!S.cur.dug){S.cur.dug=1;S.carrots++}return render(1)}
+  if(b.dataset.i!==undefined&&S.cur){const x=S.cur.next[+b.dataset.i];if(!x)return;dig(x.title);if(S.trail.length===4)toast('🥕 Past the three-hop test! The tunnel has you.')}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.away){S.away=false;S.carrots++;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;toast('🐇 Welcome back! Your trail is right where you left it. +1 🥕')}});
+critter();start();
+</script>
+</body>
+</html>
