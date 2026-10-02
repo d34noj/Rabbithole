@@ -294,15 +294,41 @@ async function resolve(q) {
   return ps.length ? ps[0].title : null;
 }
 
+async function getTopicImage(title) {
+  try {
+    const d = await api({action:'query', titles:title, redirects:1, prop:'pageimages', piprop:'thumbnail|original', pithumbsize:800});
+    const p = d.query?.pages?.[0];
+    if (p?.thumbnail?.source) return p.thumbnail.source;
+    if (p?.original?.source) return p.original.source;
+  } catch(e){}
+
+  try {
+    const d = await api({action:'query', titles:title, redirects:1, prop:'images', imlimit:10});
+    const p = d.query?.pages?.[0];
+    if (p?.images?.length) {
+      const valid = p.images.find(i => {
+        const t = i.title.toLowerCase();
+        return !t.includes('logo') && !t.includes('icon') && !t.includes('flag') && !t.includes('symbol') && !t.includes('edit') && (t.endsWith('.jpg') || t.endsWith('.png') || t.endsWith('.jpeg'));
+      });
+      if (valid) {
+        const imgInfo = await api({action:'query', titles:valid.title, prop:'imageinfo', iiprop:'url'});
+        const ip = imgInfo.query?.pages?.[0];
+        if (ip?.imageinfo?.[0]?.url) return ip.imageinfo[0].url;
+      }
+    }
+  } catch(e){}
+  return null;
+}
+
 async function topic(title) {
-  const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description|pageimages', explaintext:1, pllimit:'max', plnamespace:0, piprop:'thumbnail|original', pithumbsize:800});
+  const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description', explaintext:1, pllimit:'max', plnamespace:0});
   const p = d.query.pages[0];
   if (!p || p.missing || !p.extract) throw new Error('missing');
   const all = p.extract.split('\n').map(x => x.trim()).filter(x => x && !/^==/.test(x)).flatMap(sents).filter(x => x.length > 25);
   const src = p.title;
   const seen = new Set(S.trail.map(x => x.title));
   const links = shuf((p.links || []).map(l => l.title).filter(t => t !== src && !seen.has(t) && !BADT.test(t) && !GEN.test(t) && !DARK.test(t) && !BAD.test(t)));
-  const imgUrl = p.thumbnail ? p.thumbnail.source : (p.original ? p.original.source : null);
+  const imgUrl = await getTopicImage(src);
   
   let items = [];
   const pick = links.slice(0, 16);
@@ -337,12 +363,25 @@ async function topic(title) {
 }
 
 function lk(text, words) {
-  let h = esc(text);
-  (words || []).forEach(w => {
-    // FIXED: Use data-w for dictionary words to avoid collision with data-t (tunnels)
-    h = h.replace(new RegExp('\\b' + re(esc(w)) + '\\b'), `<button class="word" data-w="${esc(w)}">${esc(w)}</button>`);
-  });
-  return h;
+  if (!text) return '';
+  if (!words || !words.length) return esc(text);
+  
+  const sorted = [...new Set(words)].filter(Boolean).sort((a, b) => b.length - a.length);
+  if (!sorted.length) return esc(text);
+  
+  const pattern = new RegExp('\\b(' + sorted.map(re).join('|') + ')\\b', 'gi');
+  let parts = [];
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = pattern.exec(text)) !== null) {
+    parts.push(esc(text.slice(lastIndex, match.index)));
+    const w = match[0];
+    parts.push(`<button class="word" data-w="${esc(w)}">${esc(w)}</button>`);
+    lastIndex = pattern.lastIndex;
+  }
+  parts.push(esc(text.slice(lastIndex)));
+  return parts.join('');
 }
 
 const trailHtml = () => '<div class="trail" aria-label="Your journey so far">' + S.trail.map(x => `<b>${esc(x.title)}</b>`).join(' 🥕 ') + '</div>';
@@ -380,6 +419,7 @@ async function go(q) {
   S.q = q;
   S.trail = [];
   S.pool = [];
+  $('sheet').hidden = true;
   const tok = ++S.tok;
   $('app').innerHTML = '<div class="bubble"><span aria-hidden="true">🐇</span><span>Looking for a tunnel...</span></div>';
   try {
@@ -394,6 +434,7 @@ async function go(q) {
 }
 
 function dig(t) {
+  $('sheet').hidden = true;
   S.carrots++;
   S.trail.push({title:t});
   load();
@@ -426,34 +467,38 @@ async function load() {
   }
 }
 
-// FIXED: Now grabs an image from Wikipedia and applies a colouring page filter
 function printColouringSheet(topicTitle, imgUrl) {
-  const win = window.open('', '_blank');
-  const imgHtml = imgUrl ? `<img src="${imgUrl}" alt="Colouring page for ${esc(topicTitle)}">` : `<h2>Draw and color your vision of ${esc(topicTitle)}!</h2>`;
+  if (!imgUrl) return;
   
+  const win = window.open('', '_blank');
+  if (!win) {
+    toast('Please allow popups to print!');
+    return;
+  }
+
   win.document.write(`<!DOCTYPE html>
   <html>
   <head>
+  <meta charset="utf-8">
   <title>Colouring Page - ${esc(topicTitle)}</title>
   <style>
-    @page { size: A4 portrait; margin: 12mm; }
-    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; }
-    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 12px; margin-bottom: 16px; }
-    h1 { font-size: 38px; margin: 0; }
-    .box { border: 4px solid #231f4a; border-radius: 24px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 400px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-    /* This filter makes most normal photos look somewhat like a black and white colouring page outline */
-    img { max-width: 100%; max-height: 700px; filter: grayscale(100%) contrast(300%) opacity(70%); border-radius: 12px; object-fit: contain; }
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; margin:0; }
+    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10px; margin-bottom: 16px; }
+    h1 { font-size: 36px; margin: 0; color: #ff8a1f; }
+    .box { border: 4px solid #231f4a; border-radius: 20px; padding: 15px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 440px; display: flex; align-items: center; justify-content: center; }
+    img { max-width: 100%; max-height: 600px; filter: grayscale(100%) contrast(300%) brightness(110%); border-radius: 8px; object-fit: contain; }
     .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
     @media print { .btn-print { display: none; } }
   </style>
   </head>
   <body>
+    <button class="btn-print" onclick="window.print()">🖨️ Print Colouring Sheet</button>
     <div class="header">
-      <h1>🎨 ${esc(topicTitle)} Colouring Page</h1>
-      <p>Rabbithole Learning Adventure</p>
+      <h1>🎨 ${esc(topicTitle)}</h1>
+      <p>Rabbithole Colouring Adventure</p>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨️ Print Page</button>
-    <div class="box">${imgHtml}</div>
+    <div class="box"><img src="${imgUrl}" alt="${esc(topicTitle)}"></div>
   </body>
   </html>`);
   win.document.close();
@@ -465,7 +510,8 @@ function printCurriculumSheet(topicTitle) {
   const sentsList = cur.allSents && cur.allSents.length ? cur.allSents : [cur.first, cur.hook];
   
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Revision Sheet - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:15mm;}body{font-family:sans-serif;color:#1b1838;line-height:1.5;padding:0;}.badge{background:#ff8a1f;color:#231f4a;font-weight:800;padding:4px 12px;border-radius:999px;font-size:14px;}.header{border-bottom:3px solid #1b1838;padding-bottom:12px;margin-bottom:20px;}h1{font-size:32px;margin:8px 0 0;}.card{border:2px solid #1b1838;border-radius:12px;padding:16px;margin-bottom:16px;background:#fafafa;}h3{margin-top:0;color:#231f4a;border-bottom:2px solid #ff8a1f;padding-bottom:4px;}.btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;float:right;}@media print{.btn-print{display:none;}}</style></head><body><button class="btn-print" onclick="window.print()">🖨 Print Cheat Sheet</button><div class="header"><span class="badge">${esc(info.subject)}</span><h1>${esc(topicTitle)} - Core Revision Notes</h1></div><div class="card"><h3>📌 Key Facts</h3><ul>${sentsList.slice(0, 5).map(s => `<li>${esc(s)}</li>`).join('')}</ul></div></body></html>`);
+  if (!win) { toast('Please allow popups!'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Revision Sheet - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:15mm;}body{font-family:sans-serif;color:#1b1838;line-height:1.5;padding:0;}.badge{background:#ff8a1f;color:#231f4a;font-weight:800;padding:4px 12px;border-radius:999px;font-size:14px;}.header{border-bottom:3px solid #1b1838;padding-bottom:12px;margin-bottom:20px;}h1{font-size:32px;margin:8px 0 0;}.card{border:2px solid #1b1838;border-radius:12px;padding:16px;margin-bottom:16px;background:#fafafa;}h3{margin-top:0;color:#231f4a;border-bottom:2px solid #ff8a1f;padding-bottom:4px;}.btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;float:right;}@media print{.btn-print{display:none;}}</style></head><body><button class="btn-print" onclick="window.print()">🖨 Print Cheat Sheet</button><div class="header"><span class="badge">${esc(info.subject)}</span><h1>${esc(topicTitle)} - Core Revision Notes</h1></div><div class="card"><h3>📌 Key Facts</h3><ul>${sentsList.slice(0, 5).map(s => `<li>${esc(s)}</li>`).join('')}</ul></div></body></html>`);
   win.document.close();
 }
 
@@ -494,7 +540,7 @@ function render() {
     html += `<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>`;
   }
 
-  if (S.mode === 'bunny' && isKidsTopic(n.title)) {
+  if (S.mode === 'bunny' && isKidsTopic(n.title) && n.img) {
     html += `<div style="margin-top:12px"><button class="dl-btn" data-print-colour="1">🖍️ Print Free ${esc(n.title)} Colouring Sheet</button></div>`;
   } else if (S.mode === 'rabbit') {
     html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print GCSE Revision Cheat Sheet</button></div>`;
@@ -566,7 +612,6 @@ async function popWord(w) {
     const p = d.query.pages[0];
     let wordDesc = p && p.extract ? p.extract : 'No summary found.';
     if (S.mode === 'bunny') wordDesc = kidifyText(wordDesc);
-    // FIXED: The "Dig down this word" button inside the sheet now properly uses data-t
     s.innerHTML = `<h3>${esc(w)}</h3><p>${esc(wordDesc)}</p><div class="row"><button class="dig" data-t="${esc(w)}">Dig down this word 🥕</button><button class="shut" data-close="1">Close</button></div>`;
   } catch(e) {
     s.innerHTML = `<h3>${esc(w)}</h3><p>Could not load info.</p><button class="shut" data-close="1">Close</button>`;
@@ -576,7 +621,6 @@ async function popWord(w) {
 document.addEventListener('click', e => {
   const b = e.target.closest('button,a');
   if (!b) return;
-  // FIXED: data-w for dictionary popup, data-t for actual digging navigation
   if (b.dataset.w) { popWord(b.dataset.w); return; }
   if (b.dataset.t) { dig(b.dataset.t); return; }
   if (b.dataset.q) { go(b.dataset.q); return; }
