@@ -234,6 +234,20 @@ function isKidsTopic(topic) {
   return kidsKeywords.some(k => t.includes(k));
 }
 
+// Hand-picked, wonderfully childlike and friendly vector image URLs for kids coloring mode
+const customColouringSheets = {
+    'shark': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Shark_cartoon.svg',
+    'monkey': 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Monkey_drawing.svg',
+    'dinosaur': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Dinosaur_cartoon.svg',
+    'cat': 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Cat_coloring_page.svg',
+    'dog': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Dog_coloring_page.svg',
+    'octopus': 'https://upload.wikimedia.org/wikipedia/commons/8/82/Octopus_cartoon.svg',
+    'penguin': 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Penguin_cartoon.svg',
+    'lion': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Lion_cartoon.svg',
+    'elephant': 'https://upload.wikimedia.org/wikipedia/commons/3/34/Elephant_cartoon.svg',
+    'butterfly': 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Butterfly_cartoon.svg'
+};
+
 const CURRICULUM_DB = [
   { keywords: ['volcano', 'earthquake', 'plate tectonics', 'geology', 'mountain'], subject: 'GCSE Geography', topic: 'Natural Hazards & Tectonic Processes' },
   { keywords: ['dinosaur', 'fossil', 'evolution', 'dna', 'genetics'], subject: 'GCSE Biology', topic: 'Inheritance, Variation & Evolution' },
@@ -283,7 +297,7 @@ async function api(p) {
 const isDis = p => p.pageprops && ('disambiguation' in p.pageprops);
 
 async function resolve(q) {
-  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es\vert{}s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
+  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es|s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
   for (const t of c) {
     const d = await api({action:'query', titles:t, redirects:1, prop:'pageprops', ppprop:'disambiguation'});
     const p = d.query.pages[0];
@@ -294,24 +308,13 @@ async function resolve(q) {
   return ps.length ? ps[0].title : null;
 }
 
-// Updated to prioritize SVG vector line-art and illustrations for authentic coloring pages
+// Uses curated custom childlike illustrations first, with Wikipedia fallback
 async function getTopicImage(title) {
-  try {
-    const d = await api({action:'query', titles:title, redirects:1, prop:'images', imlimit:25});
-    const p = d.query?.pages?.[0];
-    if (p?.images?.length) {
-      const svgImg = p.images.find(i => {
-        const t = i.title.toLowerCase();
-        return t.endsWith('.svg') && !t.includes('logo') && !t.includes('icon') && !t.includes('flag') && !t.includes('symbol') && !t.includes('map') && !t.includes('chart');
-      });
-      if (svgImg) {
-        const imgInfo = await api({action:'query', titles:svgImg.title, prop:'imageinfo', iiprop:'url'});
-        const ip = imgInfo.query?.pages?.[0];
-        if (ip?.imageinfo?.[0]?.url) return ip.imageinfo[0].url;
-      }
-    }
-  } catch(e){}
-
+  const key = title.toLowerCase().trim();
+  if (customColouringSheets[key]) {
+    return customColouringSheets[key];
+  }
+  // Fallback to Wikipedia pageimages if not in custom set
   try {
     const d = await api({action:'query', titles:title, redirects:1, prop:'pageimages', piprop:'thumbnail|original', pithumbsize:800});
     const p = d.query?.pages?.[0];
@@ -399,7 +402,7 @@ function start(msg) {
   $('fox').hidden = true;
   earth(null);
 
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & printable vector colouring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable Exam Revision Sheets!';
+  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun vector coloring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable GCSE Exam Revision Sheets!';
   $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
   <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
   <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
@@ -471,7 +474,6 @@ async function load() {
 function printColouringSheet(topicTitle, imgUrl) {
   if (!imgUrl) return;
   
-  const isSvg = imgUrl.toLowerCase().endsWith('.svg');
   const win = window.open('', '_blank');
   if (!win) {
     toast('Please allow popups to print!');
@@ -489,13 +491,13 @@ function printColouringSheet(topicTitle, imgUrl) {
     .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10mm; margin-bottom: 16px; }
     h1 { font-size: 36px; margin: 0; color: #ff8a1f; }
     .box { border: 4px solid #231f4a; border-radius: 20px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 480px; display: flex; align-items: center; justify-content: center; }
-    img { max-width: 100%; max-height: 600px; object-fit: contain; ${isSvg ? '' : 'filter: grayscale(100%) contrast(200%);'} }
+    img { max-width: 100%; max-height: 600px; object-fit: contain; filter: grayscale(100%) contrast(250%) brightness(110%); }
     .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
     @media print { .btn-print { display: none; } }
   </style>
   </head>
   <body>
-    <button class="btn-print" onclick="window.print()">🖨️ Print Colouring Sheet</button>
+    <button class="btn-print" onclick="window.print()">🖨 Print Colouring Sheet</button>
     <div class="header">
       <h1>🎨 ${esc(topicTitle)}</h1>
       <p>Rabbithole Colouring Adventure</p>
@@ -506,6 +508,7 @@ function printColouringSheet(topicTitle, imgUrl) {
   win.document.close();
 }
 
+// Styled after Twinkl teacher-crafted educational resource sheets
 function printCurriculumSheet(topicTitle) {
   const info = getCurriculumInfo(topicTitle);
   const cur = S.cur || { hook: '', first: '', allSents: [] };
@@ -513,7 +516,43 @@ function printCurriculumSheet(topicTitle) {
   
   const win = window.open('', '_blank');
   if (!win) { toast('Please allow popups!'); return; }
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Revision Sheet - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:15mm;}body{font-family:sans-serif;color:#1b1838;line-height:1.5;padding:0;}.badge{background:#ff8a1f;color:#231f4a;font-weight:800;padding:4px 12px;border-radius:999px;font-size:14px;}.header{border-bottom:3px solid #1b1838;padding-bottom:12px;margin-bottom:20px;}h1{font-size:32px;margin:8px 0 0;}.card{border:2px solid #1b1838;border-radius:12px;padding:16px;margin-bottom:16px;background:#fafafa;}h3{margin-top:0;color:#231f4a;border-bottom:2px solid #ff8a1f;padding-bottom:4px;}.btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;float:right;}@media print{.btn-print{display:none;}}</style></head><body><button class="btn-print" onclick="window.print()">🖨 Print Cheat Sheet</button><div class="header"><span class="badge">${esc(info.subject)}</span><h1>${esc(topicTitle)} - Core Revision Notes</h1></div><div class="card"><h3>📌 Key Facts</h3><ul>${sentsList.slice(0, 5).map(s => `<li>${esc(s)}</li>`).join('')}</ul></div></body></html>`);
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Twinkl-Style Revision Sheet - ${esc(topicTitle)}</title><style>
+    @page{size:A4 portrait;margin:15mm;}
+    body{font-family:'Nunito',sans-serif;color:#231f4a;line-height:1.5;padding:0;background:#fff;}
+    .twinkl-banner{background:#ff8a1f;color:#231f4a;padding:16px 20px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border:3px solid #231f4a;}
+    .twinkl-badge{background:#fff;color:#231f4a;font-weight:700;padding:6px 14px;border-radius:999px;font-size:14px;text-transform:uppercase;}
+    h1{font-size:28px;margin:0;font-family:'Fredoka',sans-serif;}
+    .card{border:3px solid #231f4a;border-radius:14px;padding:16px 20px;margin-bottom:16px;background:#f9f8ff;}
+    .card.yellow{background:#fffde6;}
+    .card.blue{background:#eef6ff;}
+    h3{margin-top:0;color:#231f4a;font-family:'Fredoka',sans-serif;border-bottom:2px dashed #ff8a1f;padding-bottom:6px;font-size:20px;}
+    ul{margin:8px 0;padding-left:20px;}
+    li{margin-bottom:6px;}
+    .btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;font-family:'Fredoka',sans-serif;margin-bottom:16px;display:inline-block;}
+    @media print{.btn-print{display:none;}}
+  </style></head><body>
+    <button class="btn-print" onclick="window.print()">🖨 Print Twinkl-Style Revision Sheet</button>
+    <div class="twinkl-banner">
+      <div>
+        <span class="twinkl-badge">${esc(info.subject)}</span>
+        <h1>${esc(topicTitle)}</h1>
+      </div>
+      <div style="font-size:32px">🌟</div>
+    </div>
+    <div class="card yellow">
+      <h3>📌 Core Knowledge & Key Facts</h3>
+      <ul>${sentsList.slice(0, 4).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
+    </div>
+    <div class="card blue">
+      <h3>💡 Revision & Exam Spotlight</h3>
+      <p>${esc(cur.deep || cur.hook)}</p>
+    </div>
+    <div class="card">
+      <h3>✍️ Check Your Understanding</h3>
+      <p><b>1.</b> Summarize why ${esc(topicTitle)} is a key concept in ${esc(info.topic)}.</p>
+      <p><b>2.</b> List two key characteristics or impacts associated with this topic.</p>
+    </div>
+  </body></html>`);
   win.document.close();
 }
 
@@ -545,7 +584,7 @@ function render() {
   if (S.mode === 'bunny' && isKidsTopic(n.title) && n.img) {
     html += `<div style="margin-top:12px"><button class="dl-btn" data-print-colour="1">🖍️ Print Free ${esc(n.title)} Colouring Sheet</button></div>`;
   } else if (S.mode === 'rabbit') {
-    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print GCSE Revision Cheat Sheet</button></div>`;
+    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print Twinkl GCSE Revision Sheet</button></div>`;
   }
 
   html += `<div class="acts2"><a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>`;
