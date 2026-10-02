@@ -66,7 +66,7 @@ h3.next{font-size:22px;margin:26px 0 10px}
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}}
 .hook{font:600 19px/1.35 Nunito,sans-serif;margin:0 0 8px}
 .reveal .hook{font-size:21px}
-.deeper,.dl-btn{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px;display:inline-block;text-decoration:none;font-family:Fredoka,sans-serif;font-weight:600}
+.deeper{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px;display:inline-block;text-decoration:none;font-family:Fredoka,sans-serif;font-weight:600}
 .more{border-top:2px dashed var(--muted);margin-top:10px;padding-top:10px}
 .pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 button.pill{border:0;color:var(--ink);cursor:pointer}
@@ -130,10 +130,10 @@ main{max-width:1120px;padding:24px 32px 90px}
   <div class="top">
     <button class="logo" id="home" aria-label="Back to start">🐇 Rabbithole</button>
     
-    <div class="mode-switch" id="modeSwitch" role="radiogroup" aria-label="Difficulty Mode">
-      <button class="mode-btn active" data-mode="bunny" role="radio" aria-checked="true">🐰 Bunny</button>
-      <button class="mode-btn" data-mode="rabbit" role="radio" aria-checked="false">🐇 Rabbit</button>
-      <button class="mode-btn" data-mode="owl" role="radio" aria-checked="false">🦉 Owl</button>
+    <div class="mode-switch" id="modeSwitch" role="radiogroup" aria-label="Rabbithole mode">
+      <button class="mode-btn active" data-mode="bunny" role="radio" aria-checked="true">🐇 Bunny</button>
+      <button class="mode-btn" data-mode="explore" role="radio" aria-checked="false">🔎 Explore</button>
+      <button class="mode-btn" data-mode="deep" role="radio" aria-checked="false">🧠 Deep</button>
     </div>
 
     <div class="pills"><span class="pill" id="layer" hidden></span><span class="pill" id="lives" hidden></span><span class="pill" id="carrots" hidden>🥕 0</span><button class="pill" id="foxbtn" aria-pressed="true">🦊 on</button></div>
@@ -192,11 +192,11 @@ function kidifyText(text) {
   return sentences.slice(0, 2).join(' ');
 }
 
-function owlifyText(text, deep) {
+function deepText(text, deep) {
   return text + (deep ? " " + deep : "");
 }
 
-const MOLE='<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><ellipse cx="40" cy="48" rx="22" ry="20" fill="#5b4a47"/><circle cx="40" cy="58" r="5.5" fill="#ff8aa8"/><circle cx="28" cy="42" r="2.5" fill="#fff"/><circle cx="52" cy="42" r="2.5" fill="#fff"/><path d="M30 32 q10 -12 20 0" fill="none" stroke="#231f4a" stroke-width="2.5" stroke-linecap="round"/><path d="M20 66 q10 -18 20 0 q8 12 16 0 q6 -10 16 0" fill="none" stroke="#e9b44a" stroke-width="6" stroke-linecap="round"/></svg>';
+const MOLE='<svg viewBox="0 0 120 100" width="100" height="84" aria-hidden="true"><ellipse cx="58" cy="60" rx="38" ry="25" fill="#4b3b38"/><ellipse cx="82" cy="58" rx="22" ry="17" fill="#5b4743"/><path d="M96 55 q15 2 17 10 q-4 9-17 4" fill="#7b5a52"/><circle cx="91" cy="52" r="2.5" fill="#151012"/><path d="M35 72 q-10 9-18 16M49 78 q-5 11-11 17M74 78 q4 10 11 16" fill="none" stroke="#241b1b" stroke-width="5" stroke-linecap="round"/><ellipse cx="42" cy="82" rx="10" ry="5" fill="#8a6b63" transform="rotate(-25 42 82)"/><ellipse cx="68" cy="84" rx="10" ry="5" fill="#8a6b63" transform="rotate(20 68 84)"/><path d="M31 39 q26-20 48 1" fill="none" stroke="#66504b" stroke-width="5" stroke-linecap="round"/></svg>';
 const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/></svg>';
 
 function spawn() {
@@ -212,7 +212,7 @@ function spawn() {
     S.carrots++;
     $('carrots').hidden = false;
     $('carrots').textContent = '🥕 ' + S.carrots;
-    toast(mole ? '🥕 +1! You befriended a mole.' : '🥕 +1! A worm says hi.');
+    toast(mole ? '🥕 +1! The mole approves of your digging.' : '🥕 +1! A worm says hi.');
     el.remove();
   };
   document.body.appendChild(el);
@@ -226,28 +226,7 @@ function critter() {
   }, 7000 + Math.random() * 12000);
 }
 
-const SEEDS = ['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Moon','Volcano','Astronaut'];
-
-// Maps topics to free, open-access GCSE resource hubs (Physics & Maths Tutor, Corbettmaths, Maths Genie)
-function getFreeGcseResource(topicTitle) {
-  const t = topicTitle.toLowerCase();
-  if (t.includes('math') || t.includes('number') || t.includes('algebra') || t.includes('geometry') || t.includes('statistic')) {
-    return { name: 'Corbettmaths / Maths Genie Free PDFs', url: 'https://corbettmaths.com/contents/' };
-  }
-  if (t.includes('biology') || t.includes('ecosystem') || t.includes('evolution') || t.includes('cell') || t.includes('dna')) {
-    return { name: 'Physics & Maths Tutor (GCSE Biology)', url: 'https://www.physicsandmathstutor.com/biology-revision/gcse-aqa/' };
-  }
-  if (t.includes('chemistry') || t.includes('atomic') || t.includes('bonding') || t.includes('reaction')) {
-    return { name: 'Physics & Maths Tutor (GCSE Chemistry)', url: 'https://www.physicsandmathstutor.com/chemistry-revision/gcse-aqa/' };
-  }
-  if (t.includes('physics') || t.includes('space') || t.includes('gravity') || t.includes('electricity') || t.includes('motion') || t.includes('energy') || t.includes('force')) {
-    return { name: 'Physics & Maths Tutor (GCSE Physics)', url: 'https://www.physicsandmathstutor.com/physics-revision/gcse-aqa/' };
-  }
-  if (t.includes('computer') || t.includes('code') || t.includes('algorithm')) {
-    return { name: 'Physics & Maths Tutor (Computer Science)', url: 'https://www.physicsandmathstutor.com/computer-science-revision/gcse-aqa/' };
-  }
-  return { name: 'Physics & Maths Tutor (GCSE Hub)', url: 'https://www.physicsandmathstutor.com/' };
-}
+const SEEDS = ['Why do languages change?','How did the internet begin?','Why do we dream?','How does money work?','Why do cities grow?','How does music affect the brain?','What caused the Space Race?','Why do we have time zones?','How did writing begin?','Why do people migrate?','How does memory work?','What makes a democracy?','How are movies made?','Why do maps distort the world?','How does electricity reach our homes?','Why did the Roman Empire fall?','How do vaccines work?','Where did coffee come from?','Why do we have different accents?','How does artificial intelligence learn?','Why are bridges so strong?','How does a computer store information?','Why do we sleep?','How did the printing press change the world?'];
 
 const BAD = /\b(fuck\w*|shit\w*|bitch\w*|bastard\w*|asshole\w*|cunt\w*|porn\w*|nudes?|sex|sexy)\b/i;
 const DARK = /\b(suicide|murder\w*|massacre|genocide|rape\w*|terroris\w*|holocaust|torture)\b/i;
@@ -366,7 +345,7 @@ function start(msg) {
   $('fox').hidden = true;
   earth(null);
 
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun colouring pages for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Quick GCSE-style help sheets and fact dives.';
+  let modeDesc = S.mode === 'bunny' ? '🐇 Curious, playful, and a little bit unexpected.' : S.mode === 'explore' ? '🔎 Clean discovery. Show me where this goes.' : '🧠 Deeper investigation. Show me how far this goes.';
   $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:12px">${esc(modeDesc)}</p><form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form><div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
   if (msg) $('app').insertAdjacentHTML('afterbegin', `<div class="bubble"><span aria-hidden="true">🐇</span><span>${esc(msg)}</span></div>`);
   $('f').onsubmit = e => { e.preventDefault(); go($('q').value); };
@@ -516,152 +495,6 @@ $('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; 
 critter();
 start();
 </script>
-<script>
-/* Bunny colouring pages + Rabbit GCSE help sheets */
-(function () {
-  var css = document.createElement('style');
-  css.textContent =
-    '.sv{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:#fff;color:#231f4a;overflow:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 30px;font:500 17px/1.5 Nunito,system-ui,sans-serif}' +
-    '.sv .in{max-width:560px;margin:0 auto}' +
-    '.sv h1{font:700 30px Fredoka,sans-serif;margin:8px 0;text-align:center;color:#231f4a}' +
-    '.sv h2{font:600 20px Fredoka,sans-serif;margin:16px 0 6px}' +
-    '.sv svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;border:4px dashed #ff8a1f;border-radius:20px;background:#fff}' +
-    '.sv .bar2{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}' +
-    '.sv .cap{text-align:center;color:#5b5788;margin:8px 0}' +
-    '.sv li{margin:6px 0}.sv .ans{font-size:13px;color:#5b5788;margin-top:14px}' +
-    '@media print{body>*:not(#sv){display:none!important}.sv{position:static;overflow:visible;padding:0}.sv .noprint{display:none!important}.sv svg{border:3px solid #231f4a;max-width:100%}}';
-  document.head.appendChild(css);
 
-  var sv = document.createElement('div');
-  sv.className = 'sv';
-  sv.id = 'sv';
-  sv.hidden = true;
-  document.body.appendChild(sv);
-
-  var ROOT = '<svg viewBox="0 0 300 300" fill="#fff" stroke="#231f4a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" role="img" aria-label="Colouring picture">';
-  var N = ' fill="none"';
-  var ART = {
-    bun: '<ellipse cx="108" cy="70" rx="24" ry="62"/><ellipse cx="192" cy="70" rx="24" ry="62"/><circle cx="150" cy="185" r="85"/><circle cx="122" cy="170" r="10"/><circle cx="178" cy="170" r="10"/><circle cx="150" cy="198" r="9"/><path d="M150 207q-12 18-30 10M150 207q12 18 30 10"' + N + '/>',
-    fish: '<path d="M232 150L285 105 270 150 285 195Z"/><ellipse cx="150" cy="150" rx="90" ry="55"/><path d="M130 100L160 50 180 103Z"/><path d="M140 200L120 238 172 205Z"/><circle cx="105" cy="140" r="9"/><path d="M70 168q20 12 40 0"' + N + '/><circle cx="55" cy="85" r="12"/><circle cx="35" cy="55" r="8"/>',
-    oct: '<rect x="45" y="140" width="36" height="130" rx="18"/><rect x="95" y="140" width="36" height="130" rx="18"/><rect x="145" y="140" width="36" height="130" rx="18"/><rect x="195" y="140" width="36" height="130" rx="18"/><rect x="235" y="140" width="30" height="110" rx="15"/><circle cx="150" cy="105" r="75"/><circle cx="122" cy="100" r="10"/><circle cx="178" cy="100" r="10"/><path d="M125 135q25 20 50 0"' + N + '/><circle cx="150" cy="55" r="8"/>',
-    bfly: '<ellipse cx="95" cy="110" rx="65" ry="55" transform="rotate(-20 95 110)"/><ellipse cx="205" cy="110" rx="65" ry="55" transform="rotate(20 205 110)"/><ellipse cx="110" cy="205" rx="45" ry="40"/><ellipse cx="190" cy="205" rx="45" ry="40"/><ellipse cx="150" cy="155" rx="12" ry="70"/><path d="M145 90q-20-40-35-45M155 90q20-40 35-45"' + N + '/><circle cx="85" cy="105" r="15"/><circle cx="215" cy="105" r="15"/>',
-    peng: '<ellipse cx="72" cy="180" rx="16" ry="50" transform="rotate(15 72 180)"/><ellipse cx="228" cy="180" rx="16" ry="50" transform="rotate(-15 228 180)"/><ellipse cx="150" cy="165" rx="80" ry="105"/><ellipse cx="150" cy="185" rx="52" ry="78"/><circle cx="125" cy="115" r="9"/><circle cx="175" cy="115" r="9"/><path d="M138 133h24l-12 20Z"/><ellipse cx="115" cy="272" rx="28" ry="10"/><ellipse cx="185" cy="272" rx="28" ry="10"/>',
-    cat: '<path d="M80 110L85 40 135 85Z"/><path d="M220 110L215 40 165 85Z"/><circle cx="150" cy="160" r="85"/><circle cx="120" cy="150" r="10"/><circle cx="180" cy="150" r="10"/><path d="M140 175h20l-10 13Z"/><path d="M150 188q-12 15-28 8M150 188q12 15 28 8M55 170L110 178M55 195L110 188M245 170L190 178M245 195L190 188"' + N + '/>',
-    ele: '<ellipse cx="68" cy="140" rx="45" ry="62"/><ellipse cx="232" cy="140" rx="45" ry="62"/><circle cx="150" cy="130" r="75"/><rect x="128" y="165" width="44" height="115" rx="22"/><circle cx="122" cy="115" r="9"/><circle cx="178" cy="115" r="9"/><path d="M105 190q-15 25 5 40M195 190q15 25-5 40"' + N + '/>',
-    rkt: '<path d="M150 30Q210 90 200 200H100Q90 90 150 30Z"/><circle cx="150" cy="110" r="25"/><path d="M100 160L60 230 100 210Z"/><path d="M200 160L240 230 200 210Z"/><path d="M120 205L150 275 180 205Z"/><circle cx="40" cy="50" r="8"/><circle cx="260" cy="70" r="8"/><circle cx="250" cy="150" r="6"/>',
-    monkey: '<circle cx="60" cy="140" r="30"/><circle cx="240" cy="140" r="30"/><circle cx="60" cy="140" r="14"/><circle cx="240" cy="140" r="14"/><circle cx="150" cy="150" r="85"/><ellipse cx="150" cy="178" rx="55" ry="45"/><circle cx="125" cy="140" r="9"/><circle cx="175" cy="140" r="9"/><circle cx="140" cy="170" r="3"/><circle cx="160" cy="170" r="3"/><path d="M125 195q25 20 50 0" fill="none"/>',
-    dog: '<ellipse cx="70" cy="135" rx="28" ry="60" transform="rotate(15 70 135)"/><ellipse cx="230" cy="135" rx="28" ry="60" transform="rotate(-15 230 135)"/><circle cx="150" cy="150" r="80"/><ellipse cx="150" cy="192" rx="42" ry="32"/><ellipse cx="150" cy="176" rx="16" ry="11"/><circle cx="120" cy="138" r="9"/><circle cx="180" cy="138" r="9"/><ellipse cx="150" cy="222" rx="12" ry="14"/><path d="M150 187v14M150 201q-14 12-28 4M150 201q14 12 28 4" fill="none"/>',
-    lion: '<circle cx="150" cy="150" r="115"/><circle cx="80" cy="62" r="20"/><circle cx="220" cy="62" r="20"/><circle cx="150" cy="155" r="72"/><circle cx="125" cy="145" r="8"/><circle cx="175" cy="145" r="8"/><path d="M138 165h24l-12 15Z"/><path d="M150 180q-12 16-26 8M150 180q12 16 26 8" fill="none"/>',
-    dino: '<path d="M50 190L8 245 70 230Z"/><rect x="85" y="225" width="36" height="55" rx="12"/><rect x="150" y="225" width="36" height="55" rx="12"/><ellipse cx="130" cy="200" rx="90" ry="50"/><rect x="190" y="70" width="40" height="140" rx="20"/><ellipse cx="225" cy="65" rx="36" ry="26"/><circle cx="238" cy="58" r="6"/><path d="M100 155L115 125 130 152M135 152L150 122 165 150" fill="none"/><path d="M250 74q-8 6-18 4" fill="none"/>',
-    bear: '<circle cx="80" cy="70" r="28"/><circle cx="220" cy="70" r="28"/><circle cx="150" cy="160" r="88"/><ellipse cx="118" cy="150" rx="22" ry="28" transform="rotate(-20 118 150)"/><ellipse cx="182" cy="150" rx="22" ry="28" transform="rotate(20 182 150)"/><circle cx="118" cy="152" r="8"/><circle cx="182" cy="152" r="8"/><ellipse cx="150" cy="185" rx="12" ry="8"/><path d="M150 193q-10 14-24 8M150 193q10 14 24 8" fill="none"/>',
-    giraffe: '<rect x="120" y="110" width="60" height="170" rx="30"/><ellipse cx="100" cy="78" rx="16" ry="9" transform="rotate(-20 100 78)"/><ellipse cx="200" cy="78" rx="16" ry="9" transform="rotate(20 200 78)"/><ellipse cx="150" cy="85" rx="45" ry="35"/><path d="M130 55V30M170 55V30" fill="none"/><circle cx="130" cy="28" r="7"/><circle cx="170" cy="28" r="7"/><circle cx="135" cy="80" r="6"/><circle cx="165" cy="80" r="6"/><ellipse cx="150" cy="102" rx="26" ry="14"/><circle cx="142" cy="102" r="2.5"/><circle cx="158" cy="102" r="2.5"/><circle cx="135" cy="160" r="14"/><circle cx="165" cy="200" r="14"/><circle cx="140" cy="245" r="12"/>',
-    tiger: '<circle cx="85" cy="70" r="25"/><circle cx="215" cy="70" r="25"/><circle cx="150" cy="160" r="88"/><path d="M150 80v35M125 85l8 28M175 85l-8 28M65 150l28 8M65 180l30-4M235 150l-28 8M235 180l-30-4" fill="none"/><circle cx="120" cy="150" r="9"/><circle cx="180" cy="150" r="9"/><ellipse cx="150" cy="198" rx="34" ry="24"/><path d="M140 185h20l-10 12Z"/><path d="M150 197v10M150 207q-10 8-20 3M150 207q10 8 20 3" fill="none"/>',
-    horse: '<path d="M110 85L100 40 135 70Z"/><path d="M190 85L200 40 165 70Z"/><ellipse cx="150" cy="165" rx="55" ry="95"/><path d="M95 90q-25 60-5 130M205 90q25 60 5 130M120 80q15 25 30 0q15 25 30 0" fill="none"/><circle cx="118" cy="140" r="8"/><circle cx="182" cy="140" r="8"/><ellipse cx="150" cy="235" rx="40" ry="30"/><circle cx="135" cy="238" r="5"/><circle cx="165" cy="238" r="5"/>',
-    owl: '<ellipse cx="70" cy="185" rx="18" ry="55"/><ellipse cx="230" cy="185" rx="18" ry="55"/><path d="M80 90L70 40 115 75Z"/><path d="M220 90L230 40 185 75Z"/><ellipse cx="150" cy="170" rx="85" ry="105"/><circle cx="115" cy="135" r="32"/><circle cx="185" cy="135" r="32"/><circle cx="115" cy="135" r="12"/><circle cx="185" cy="135" r="12"/><path d="M138 155L162 155 150 185Z"/><path d="M110 215q12 10 24 0M140 215q12 10 24 0M170 215q12 10 24 0M125 245q12 10 24 0M155 245q12 10 24 0" fill="none"/><ellipse cx="125" cy="282" rx="22" ry="8"/><ellipse cx="175" cy="282" rx="22" ry="8"/>',
-    turtle: '<ellipse cx="70" cy="120" rx="22" ry="16"/><ellipse cx="230" cy="120" rx="22" ry="16"/><ellipse cx="75" cy="215" rx="22" ry="16"/><ellipse cx="225" cy="215" rx="22" ry="16"/><circle cx="150" cy="60" r="28"/><circle cx="140" cy="55" r="4"/><circle cx="160" cy="55" r="4"/><path d="M150 235L140 268 160 268Z"/><ellipse cx="150" cy="165" rx="90" ry="70"/><path d="M135 140h30l15 25-15 25h-30l-15-25Z"/><path d="M120 165L88 165M180 165L212 165M135 140L115 115M165 140L185 115M135 190L115 215M165 190L185 215" fill="none"/>',
-    frog: '<ellipse cx="70" cy="265" rx="30" ry="12"/><ellipse cx="230" cy="265" rx="30" ry="12"/><ellipse cx="150" cy="190" rx="90" ry="75"/><circle cx="105" cy="105" r="32"/><circle cx="195" cy="105" r="32"/><circle cx="105" cy="105" r="12"/><circle cx="195" cy="105" r="12"/><circle cx="138" cy="155" r="3"/><circle cx="162" cy="155" r="3"/><path d="M80 200q70 55 140 0" fill="none"/>',
-    bee: '<ellipse cx="120" cy="95" rx="28" ry="45" transform="rotate(-20 120 95)"/><ellipse cx="180" cy="95" rx="28" ry="45" transform="rotate(20 180 95)"/><path d="M220 165L255 158 255 172Z"/><ellipse cx="150" cy="165" rx="70" ry="55"/><path d="M120 118v95M150 112v107M180 118v95" fill="none"/><circle cx="65" cy="165" r="32"/><circle cx="58" cy="158" r="5"/><path d="M50 175q10 8 20 0M58 135q-8-25-22-30M75 135q2-25 15-35" fill="none"/>',
-    croc: '<path d="M30 165L5 200 45 190Z"/><rect x="70" y="205" width="28" height="40" rx="12"/><rect x="140" y="205" width="28" height="40" rx="12"/><ellipse cx="110" cy="175" rx="90" ry="40"/><rect x="160" y="130" width="130" height="45" rx="22"/><circle cx="205" cy="140" r="7"/><circle cx="280" cy="142" r="3"/><path d="M175 175l8 10 8-10 8 10 8-10 8 10 8-10 8 10M70 140l10-15 10 15 10-15 10 15 10-15 10 15" fill="none"/>',
-    car: '<path d="M30 190V160Q30 140 55 138L95 100Q105 92 120 92H190Q205 92 215 100L250 138Q272 140 272 165V190Z"/><path d="M105 132L125 105H150V132Z"/><path d="M165 132V105H190L215 132Z"/><path d="M160 138V185" fill="none"/><circle cx="85" cy="195" r="28"/><circle cx="220" cy="195" r="28"/><circle cx="85" cy="195" r="10"/><circle cx="220" cy="195" r="10"/><circle cx="258" cy="165" r="9"/>',
-    rainbow: '<path d="M20 230A130 130 0 0 1 280 230Z"/><path d="M55 230A95 95 0 0 1 245 230Z"/><path d="M90 230A60 60 0 0 1 210 230Z"/><path d="M125 230A25 25 0 0 1 175 230Z"/><circle cx="35" cy="245" r="25"/><circle cx="65" cy="252" r="22"/><circle cx="265" cy="245" r="25"/><circle cx="235" cy="252" r="22"/>',
-    scene: '<circle cx="70" cy="70" r="34"/><path d="M70 15v12M70 113v12M15 70h12M113 70h12M31 31l9 9M109 109l9 9M31 109l9-9M109 31l9-9"' + N + '/><circle cx="195" cy="85" r="22"/><circle cx="225" cy="80" r="28"/><circle cx="255" cy="90" r="20"/><path d="M0 300Q150 170 300 300Z"/><path d="M150 290V220"' + N + '/><circle cx="150" cy="170" r="18"/><circle cx="175" cy="188" r="18"/><circle cx="165" cy="214" r="18"/><circle cx="135" cy="214" r="18"/><circle cx="125" cy="188" r="18"/><circle cx="150" cy="197" r="14"/>'
-  };
-  var AM = [
-    ['bun', /bunn|rabbit|\bhare\b/], ['fish', /shark|fish|whale|dolphin|ocean|\bsea\b|beach/],
-    ['oct', /octopus|squid|jelly|kraken/], ['bfly', /butterfl|\bmoths?\b/],
-    ['peng', /penguin/], ['cat', /\bcats?\b|kitten/], ['dog', /\bdogs?\b|puppy|puppies/],
-    ['lion', /\blions?\b/], ['monkey', /monkey|chimp/], ['dino', /dinosaur|brontosaur|diplodocus/],
-    ['bear', /\bbears?\b|panda/], ['ele', /elephant/], ['giraffe', /giraffe/], ['tiger', /tiger/], ['horse', /\bhorses?\b|\bpony|\bponies/], ['owl', /\bowls?\b/], ['turtle', /turtle|tortoise/], ['frog', /\bfrogs?\b|\btoads?\b/], ['bee', /\bbees?\b|bumblebee/], ['croc', /crocodile|alligator/], ['car', /\bcars?\b|automobile|\btaxi/], ['rainbow', /rainbow/], ['rkt', /rocket|astronaut|\bspace\b|\bmoon\b|\bmars\b/]
-  ];
-  function artFor(t) {
-    t = t.toLowerCase();
-    for (var i = 0; i < AM.length; i++) if (AM[i][1].test(t)) return AM[i][0];
-    return 'scene';
-  }
-
-  function openSheet(inner) {
-    sv.innerHTML = '<div class="in"><div class="noprint bar2"><button class="dl-btn" data-printnow="1">🖨 Print</button><button class="shut" data-closesv="1">Close</button></div>' + inner + '</div>';
-    sv.hidden = false;
-    sv.scrollTop = 0;
-  }
-
-  function colourSheet() {
-    var t = S.cur.title;
-    var k = artFor(t);
-    openSheet('<h1>🎨 Colour in: ' + esc(t) + '</h1>' + ROOT + ART[k] + '</svg><p class="cap">' + (k === 'scene' ? 'I haven\'t drawn a ' + esc(t) + ' yet, so here is a sunny day to colour in instead!' : 'Rabbithole Bunny Colouring Page. Use your brightest colours!') + '</p>');
-  }
-
-  function helpSheet() {
-    var n = S.cur, r = getFreeGcseResource(n.title);
-    var facts = (n.allSents || []).slice(0, 6);
-    var terms = [];
-    (n.words || []).concat((n.next || []).map(function (x) { return x.title; })).forEach(function (w) {
-      w = base(w);
-      if (w.length > 3 && terms.indexOf(w) < 0) terms.push(w);
-    });
-    var qs = [], ans = [];
-    facts.forEach(function (s) {
-      if (qs.length >= 3) return;
-      for (var i = 0; i < terms.length; i++) {
-        var rx = new RegExp('\\b' + re(terms[i]) + '\\b', 'i');
-        if (rx.test(s)) { qs.push(s.replace(rx, '__________')); ans.push(terms[i]); return; }
-      }
-    });
-    qs.push('Explain ' + n.title + ' in your own words (2 or 3 sentences).');
-    qs.push('Write one question you still have about ' + n.title + '.');
-    openSheet(
-      '<h1>📑 Help sheet: ' + esc(n.title) + '</h1><p class="cap">' + esc(n.desc || '') + '</p>' +
-      '<h2>Key facts</h2><ul>' + facts.slice(0, 4).map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
-      (terms.length ? '<h2>Key words</h2><p>' + terms.slice(0, 6).map(esc).join(' • ') + '</p>' : '') +
-      '<h2>Test yourself</h2><ol>' + qs.map(function (q) { return '<li>' + esc(q) + '<br><br></li>'; }).join('') + '</ol>' +
-      (ans.length ? '<p class="ans">Gaps answers: ' + ans.map(esc).join(', ') + '</p>' : '') +
-      '<div class="noprint" style="text-align:center;margin-top:14px"><a class="dl-btn" href="' + r.url + '" target="_blank" rel="noopener noreferrer">Free GCSE past papers &amp; notes: ' + esc(r.name) + '</a></div>'
-    );
-  }
-
-  window.getTopicImage = async function () { return null; };
-
-  window.render = function () {
-    var n = S.cur, len = S.trail.length;
-    earth(len - 1);
-    if (S.fox && len >= 2 && !S.met) { S.met = true; fox(n.title); }
-    if (len >= 5 && !S.asked.has(len)) { S.asked.add(len); setTimeout(function () { toast(rnd(HOP)); }, 600); }
-    var mainHook = n.hook, mainDeep = n.deep;
-    if (S.mode === 'bunny') { mainHook = kidifyText(n.hook); mainDeep = kidifyText(n.deep); }
-    else if (S.mode === 'owl') { mainHook = owlifyText(n.hook, n.deep); }
-
-    var html = '<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>' + esc(n.title) + '</h2><p class="src">' + esc(n.desc || 'Wikipedia entry') + '</p>' +
-      '<p class="hook">' + lk(mainHook, n.words) + '</p>' +
-      (S.deep ? '<div class="more"><p>' + lk(mainDeep, n.words) + '</p></div>' : '');
-    if (!S.deep) html += '<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>';
-
-    if (S.mode === 'bunny') html += '<div style="margin-top:12px"><button class="dl-btn" data-colour="1">🖍️ Colour in ' + esc(n.title) + '</button></div>';
-    else if (S.mode === 'rabbit') html += '<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-help="1">📑 GCSE help sheet</button></div>';
-
-    html += '<div class="acts2"><a class="wiki" href="' + wurl(n.title) + '" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>';
-
-    if (n.next.length) {
-      html += '<h3 class="next">Which tunnel next?</h3><div class="tunnels">';
-      n.next.forEach(function (x) {
-        var d = S.mode === 'bunny' ? kidifyText(x.first) : x.first;
-        html += '<div class="card"><h3>' + esc(x.title) + '</h3><p class="why">' + esc(x.bridge ? Q[0].replace('X', n.title) : 'A linked tunnel from here.') + '</p><div class="fact"><p>' + lk(d, n.words) + '</p></div><button class="dig" data-t="' + esc(x.title) + '">Dig down here 🥕</button></div>';
-      });
-      html += '</div>';
-    }
-    $('app').innerHTML = trailHtml() + html;
-  };
-
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest('button');
-    if (!b) return;
-    if (b.dataset.colour && S.cur) colourSheet();
-    else if (b.dataset.help && S.cur) helpSheet();
-    else if (b.dataset.printnow) window.print();
-    else if (b.dataset.closesv) sv.hidden = true;
-  });
-
-  if (S.cur) window.render();
-})();
-</script>
 </body>
 </html>
