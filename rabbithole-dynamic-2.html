@@ -295,13 +295,14 @@ async function resolve(q) {
 }
 
 async function topic(title) {
-  const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description', explaintext:1, pllimit:'max', plnamespace:0});
+  const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description|pageimages', explaintext:1, pllimit:'max', plnamespace:0, piprop:'thumbnail|original', pithumbsize:800});
   const p = d.query.pages[0];
   if (!p || p.missing || !p.extract) throw new Error('missing');
   const all = p.extract.split('\n').map(x => x.trim()).filter(x => x && !/^==/.test(x)).flatMap(sents).filter(x => x.length > 25);
   const src = p.title;
   const seen = new Set(S.trail.map(x => x.title));
   const links = shuf((p.links || []).map(l => l.title).filter(t => t !== src && !seen.has(t) && !BADT.test(t) && !GEN.test(t) && !DARK.test(t) && !BAD.test(t)));
+  const imgUrl = p.thumbnail ? p.thumbnail.source : (p.original ? p.original.source : null);
   
   let items = [];
   const pick = links.slice(0, 16);
@@ -332,13 +333,14 @@ async function topic(title) {
   const txt = hook + ' ' + deep;
   let words = links.filter(t => !out.some(o => o.title === t) && new RegExp('\\b' + re(t) + '\\b').test(txt)).slice(0, 3);
   words = words.filter(w => !words.some(o => o !== w && o.includes(w)));
-  return {title:src, desc:p.description||'', hook, deep, words, first:short(all[0]||'', 200), next:out, allSents:all};
+  return {title:src, desc:p.description||'', hook, deep, words, first:short(all[0]||'', 200), next:out, allSents:all, img:imgUrl};
 }
 
 function lk(text, words) {
   let h = esc(text);
   (words || []).forEach(w => {
-    h = h.replace(new RegExp('\\b' + re(esc(w)) + '\\b'), `<button class="word" data-t="${esc(w)}">${esc(w)}</button>`);
+    // FIXED: Use data-w for dictionary words to avoid collision with data-t (tunnels)
+    h = h.replace(new RegExp('\\b' + re(esc(w)) + '\\b'), `<button class="word" data-w="${esc(w)}">${esc(w)}</button>`);
   });
   return h;
 }
@@ -424,9 +426,36 @@ async function load() {
   }
 }
 
-function printColouringSheet(topicTitle) {
+// FIXED: Now grabs an image from Wikipedia and applies a colouring page filter
+function printColouringSheet(topicTitle, imgUrl) {
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Colouring Page - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:12mm;}body{font-family:sans-serif;text-align:center;color:#231f4a;padding:10px;}.header{border-bottom:4px dashed #ff8a1f;padding-bottom:12px;margin-bottom:16px;}h1{font-size:38px;margin:0;}.box{border:4px solid #231f4a;border-radius:24px;padding:20px;background:#fff;margin:10px auto;max-width:680px;min-height:400px;display:flex;align-items:center;justify-content:center;}.btn-print{background:#ff8a1f;color:#231f4a;border:none;padding:12px 28px;font-size:20px;font-weight:bold;border-radius:999px;cursor:pointer;}@media print{.btn-print{display:none;}}</style></head><body><div class="header"><h1>🎨 ${esc(topicTitle)} Colouring Page</h1><p>Rabbithole Learning Adventure</p></div><button class="btn-print" onclick="window.print()">🖨️ Print Page</button><div class="box"><h2>Draw and color your vision of ${esc(topicTitle)}!</h2></div></body></html>`);
+  const imgHtml = imgUrl ? `<img src="${imgUrl}" alt="Colouring page for ${esc(topicTitle)}">` : `<h2>Draw and color your vision of ${esc(topicTitle)}!</h2>`;
+  
+  win.document.write(`<!DOCTYPE html>
+  <html>
+  <head>
+  <title>Colouring Page - ${esc(topicTitle)}</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; }
+    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 12px; margin-bottom: 16px; }
+    h1 { font-size: 38px; margin: 0; }
+    .box { border: 4px solid #231f4a; border-radius: 24px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 400px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    /* This filter makes most normal photos look somewhat like a black and white colouring page outline */
+    img { max-width: 100%; max-height: 700px; filter: grayscale(100%) contrast(300%) opacity(70%); border-radius: 12px; object-fit: contain; }
+    .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
+    @media print { .btn-print { display: none; } }
+  </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎨 ${esc(topicTitle)} Colouring Page</h1>
+      <p>Rabbithole Learning Adventure</p>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Print Page</button>
+    <div class="box">${imgHtml}</div>
+  </body>
+  </html>`);
   win.document.close();
 }
 
@@ -537,6 +566,7 @@ async function popWord(w) {
     const p = d.query.pages[0];
     let wordDesc = p && p.extract ? p.extract : 'No summary found.';
     if (S.mode === 'bunny') wordDesc = kidifyText(wordDesc);
+    // FIXED: The "Dig down this word" button inside the sheet now properly uses data-t
     s.innerHTML = `<h3>${esc(w)}</h3><p>${esc(wordDesc)}</p><div class="row"><button class="dig" data-t="${esc(w)}">Dig down this word 🥕</button><button class="shut" data-close="1">Close</button></div>`;
   } catch(e) {
     s.innerHTML = `<h3>${esc(w)}</h3><p>Could not load info.</p><button class="shut" data-close="1">Close</button>`;
@@ -546,7 +576,9 @@ async function popWord(w) {
 document.addEventListener('click', e => {
   const b = e.target.closest('button,a');
   if (!b) return;
-  if (b.dataset.t) { popWord(b.dataset.t); return; }
+  // FIXED: data-w for dictionary popup, data-t for actual digging navigation
+  if (b.dataset.w) { popWord(b.dataset.w); return; }
+  if (b.dataset.t) { dig(b.dataset.t); return; }
   if (b.dataset.q) { go(b.dataset.q); return; }
   if (b.dataset.shuf) { $('seeds').innerHTML = seeds(); return; }
   if (b.dataset.deep) { S.deep = true; render(); return; }
@@ -563,7 +595,7 @@ document.addEventListener('click', e => {
     if (S.cur) render(); else start();
     return;
   }
-  if (b.dataset.printColour) { printColouringSheet(S.cur.title); return; }
+  if (b.dataset.printColour) { printColouringSheet(S.cur.title, S.cur.img); return; }
   if (b.dataset.printExam) { printCurriculumSheet(S.cur.title); return; }
 });
 
