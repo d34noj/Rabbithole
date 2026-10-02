@@ -192,10 +192,6 @@ function kidifyText(text) {
   return sentences.slice(0, 2).join(' ');
 }
 
-function deepText(text, deep) {
-  return text + (deep ? " " + deep : "");
-}
-
 const MOLE='<svg viewBox="0 0 120 100" width="100" height="84" aria-hidden="true"><ellipse cx="58" cy="60" rx="38" ry="25" fill="#4b3b38"/><ellipse cx="82" cy="58" rx="22" ry="17" fill="#5b4743"/><path d="M96 55 q15 2 17 10 q-4 9-17 4" fill="#7b5a52"/><circle cx="91" cy="52" r="2.5" fill="#151012"/><path d="M35 72 q-10 9-18 16M49 78 q-5 11-11 17M74 78 q4 10 11 16" fill="none" stroke="#241b1b" stroke-width="5" stroke-linecap="round"/><ellipse cx="42" cy="82" rx="10" ry="5" fill="#8a6b63" transform="rotate(-25 42 82)"/><ellipse cx="68" cy="84" rx="10" ry="5" fill="#8a6b63" transform="rotate(20 68 84)"/><path d="M31 39 q26-20 48 1" fill="none" stroke="#66504b" stroke-width="5" stroke-linecap="round"/></svg>';
 const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/></svg>';
 
@@ -316,6 +312,8 @@ function lk(text, words) {
   const sorted = [...new Set(words)].filter(Boolean).sort((a, b) => b.length - a.length);
   if (!sorted.length) return esc(text);
   
+  const canon = {};
+  sorted.forEach(w => { canon[w.toLowerCase()] = w; });
   const pattern = new RegExp('\\b(' + sorted.map(re).join('|') + ')\\b', 'gi');
   let parts = [];
   let lastIndex = 0;
@@ -324,7 +322,7 @@ function lk(text, words) {
   while ((match = pattern.exec(text)) !== null) {
     parts.push(esc(text.slice(lastIndex, match.index)));
     const w = match[0];
-    parts.push(`<button class="word" data-w="${esc(w)}">${esc(w)}</button>`);
+    parts.push(`<button class="word" data-w="${esc(canon[w.toLowerCase()] || w)}">${esc(w)}</button>`);
     lastIndex = pattern.lastIndex;
   }
   parts.push(esc(text.slice(lastIndex)));
@@ -412,6 +410,35 @@ async function load() {
   }
 }
 
+function render() {
+  const n = S.cur, len = S.trail.length;
+  earth(len - 1);
+  if (S.fox && len >= 2 && !S.met) { S.met = true; fox(n.title); }
+  if (len >= 5 && !S.asked.has(len)) { S.asked.add(len); setTimeout(() => toast(rnd(HOP)), 600); }
+
+  const bunny = S.mode === 'bunny';
+  const showMore = S.mode === 'deep' || S.deep;
+  const hook = bunny ? kidifyText(n.hook) : n.hook;
+  const more = bunny ? kidifyText(n.deep) : n.deep;
+
+  let html = `<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>${esc(n.title)}</h2><p class="src">${esc(n.desc || 'Wikipedia entry')}</p>
+  <p class="hook">${lk(hook, n.words)}</p>${showMore && more ? `<div class="more"><p>${lk(more, n.words)}</p></div>` : ''}`;
+  if (!showMore) html += '<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>';
+  html += `<div class="acts2"><a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Learn more on Wikipedia</a></div></div>`;
+
+  if (n.next.length) {
+    html += '<h3 class="next">Which tunnel next?</h3><div class="tunnels">';
+    n.next.forEach((x, i) => {
+      const d = bunny ? kidifyText(x.first) : x.first;
+      html += `<div class="card"><h3>${esc(x.title)}</h3><p class="why">${esc(x.bridge ? Q[i % Q.length].replace('X', n.title) : 'A linked tunnel from here.')}</p><div class="fact"><p>${esc(d)}</p></div><button class="dig" data-t="${esc(x.title)}">Dig down here 🥕</button></div>`;
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="bubble"><span aria-hidden="true">🐇</span><span>This tunnel is a dead end! Tap 🐇 Rabbithole at the top to start a new one.</span></div>';
+  }
+  $('app').innerHTML = trailHtml() + html;
+}
+
 async function fox(t) {
   try {
     const d = await api({action:'query', generator:'search', gsrsearch:t, gsrlimit:8, gsrnamespace:0, prop:'extracts', exintro:1, explaintext:1, exlimit:'max'});
@@ -478,7 +505,7 @@ document.addEventListener('click', e => {
   if (b.dataset.shuf) { $('seeds').innerHTML = seeds(); return; }
   if (b.dataset.deep) { S.deep = true; render(); return; }
   if (b.dataset.fopt != null) { answerFox(+b.dataset.fopt); return; }
-  if (b.dataset.foxoff) { S.fox = false; $('foxbtn').textContent = '🦊 off'; $('foxbtn').ariaPressed = 'false';$('fox').hidden = true; toast('Fox quizzes turned off.'); return; }
+  if (b.dataset.foxoff) { S.fox = false; $('foxbtn').textContent = '🦊 off'; $('foxbtn').setAttribute('aria-pressed', 'false');$('fox').hidden = true; toast('Fox quizzes turned off.'); return; }
   if (b.dataset.close) { $('sheet').hidden = true; return; }
   if (b.dataset.mode) {
     document.querySelectorAll('.mode-btn').forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-checked','false'); });
@@ -490,7 +517,7 @@ document.addEventListener('click', e => {
   }
 });
 
-$('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').ariaPressed = String(S.fox); toast(S.fox ? 'Fox quizzes are on.' : 'Fox quizzes are off.'); if (!S.fox) $('fox').hidden = true; };
+$('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').setAttribute('aria-pressed', String(S.fox)); toast(S.fox ? 'Fox quizzes are on.' : 'Fox quizzes are off.'); if (!S.fox) $('fox').hidden = true; };
 
 critter();
 start();
