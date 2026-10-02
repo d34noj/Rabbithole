@@ -55,10 +55,10 @@ h3.next{font-size:22px;margin:26px 0 10px}
 .fact{background:rgba(255,255,255,.6);border-radius:14px;padding:10px 12px}
 .why{font-size:15px}
 .dig{background:#231f4a;color:#fff;border-radius:999px;padding:10px 16px;font-size:16px;width:100%;margin-top:4px}
-.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--carrot);color:#231f4a;font:600 16px Fredoka,sans-serif;border-radius:999px;padding:10px 18px;width:max-content;max-width:92vw;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--carrot);color:#231f4a;font:600 16px Fredoka,sans-serif;border-radius:999px;padding:10px 16px;box-shadow:0 8px 20px rgba(0,0,0,.15);z-index:10}
 [hidden]{display:none!important}
-.word{background:none;border:0;padding:0;font:inherit;font-weight:700;color:inherit;cursor:pointer;-webkit-text-decoration:underline wavy var(--carrot);text-decoration:underline wavy var(--carrot);text-underline-offset:4px;text-decoration-thickness:2px}
-.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;background:#ffe66d;color:#231f4a;border-radius:26px 26px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 0 var(--carrot);animation:up .25s ease-out;z-index:5}
+.word{background:none;border:0;padding:0;font:inherit;font-weight:700;color:inherit;cursor:pointer;-webkit-text-decoration:underline wavy var(--carrot);text-decoration:underline wavy var(--carrot)}
+.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:640px;background:#ffe66d;color:#231f4a;border-radius:26px 26px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));z-index:30;box-shadow:0 -10px 30px rgba(0,0,0,.12);animation:up .45s ease}
 .sheet h3{font-size:24px;margin:0 0 6px}.sheet p{margin:0 0 12px}
 .sheet .row{display:flex;flex-direction:column;gap:8px}
 .shut{background:rgba(35,31,74,.12);color:#231f4a;border-radius:999px;padding:10px 16px;font-size:16px}
@@ -66,11 +66,11 @@ h3.next{font-size:22px;margin:26px 0 10px}
 @media (prefers-reduced-motion:reduce){.sheet{animation:none}}
 .hook{font:600 19px/1.35 Nunito,sans-serif;margin:0 0 8px}
 .reveal .hook{font-size:21px}
-.deeper,.dl-btn{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px;display:inline-block;text-decoration:none;font-family:Fredoka,sans-serif;font-weight:600;cursor:pointer}
+.deeper,.dl-btn{background:var(--carrot);color:#231f4a;border-radius:999px;padding:9px 16px;font-size:16px;margin-top:4px;display:inline-block;text-decoration:none;font-family:Fredoka,sans-serif;font-weight:600}
 .more{border-top:2px dashed var(--muted);margin-top:10px;padding-top:10px}
 .pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 button.pill{border:0;color:var(--ink);cursor:pointer}
-.fox{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(20,10,40,.82);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}
+.fox{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;display:flex;align-items:center;justify-content:center;background:rgba(20,10,40,.82);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));}
 .fbox{background:#ffb55e;color:#231f4a;border-radius:28px;padding:20px;max-width:520px;width:100%;box-shadow:0 8px 0 #c4561a}
 .face{font-size:72px;line-height:1;text-align:center;animation:wob 1.2s ease-in-out infinite}
 @keyframes wob{50%{transform:rotate(-6deg) scale(1.06)}}
@@ -94,9 +94,9 @@ button,a{-webkit-tap-highlight-color:transparent}
 html{background:#7fd0ff}
 body{background:transparent}
 #earth{position:fixed;top:0;right:0;bottom:0;left:0;z-index:-2;pointer-events:none;background-size:100% 800vh;background-position:0 0;transition:background-position-y 1.8s ease;
-background-image:linear-gradient(to bottom,#7fd0ff 0%,#d4f1ff 10.8%,#62c254 11%,#3f8f37 12.4%,#8d5c38 12.5%,#7a4a2d 24.9%,#77472b 25%,#5f361e 37.4%,#6e3b28 37.5%,#55291d 49.9%,#4f4541 50%,#3d3634 62.4%,#3b3846 62.5%,#2a2834 74.9%,#29272f 75%,#1b1a24 87.4%,#1d1b26 87.5%,#3a0f08 100%)}
+background-image:linear-gradient(to bottom,#7fd0ff 0%,#d4f1ff 10.8%,#62c254 11%,#3f8f37 12.4%,#8d5c38 12.5%,#7a4a2d 24.9%,#77472b 25%,#5f361e 37.4%,#6e3b28 37.5%,#55291d 49.9%,#4f4541 50%,#3d3634 62.4%,#2f2f4e 62.5%,#211f3d 75%,#170f2b 100%)}
 #specks{position:fixed;top:0;right:0;bottom:0;left:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.2s;
-background-image:radial-gradient(circle at 20% 30%,rgba(0,0,0,.35) 0 2px,transparent 3px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.14) 0 2px,transparent 3px),radial-gradient(circle at 45% 82%,rgba(0,0,0,.28) 0 1.5px,transparent 2.5px);background-size:46px 46px,67px 67px,31px 31px}
+background-image:radial-gradient(circle at 20% 30%,rgba(0,0,0,.35) 0 2px,transparent 3px),radial-gradient(circle at 70% 60%,rgba(255,255,255,.14) 0 2px,transparent 3px),radial-gradient(circle at 40% 20%,rgba(0,0,0,.28) 0 1.8px,transparent 2.5px),radial-gradient(circle at 75% 25%,rgba(255,255,255,.1) 0 2px,transparent 3px),radial-gradient(circle at 10% 80%,rgba(0,0,0,.24) 0 2.4px,transparent 3px)}
 .under #specks{opacity:.6}
 body,.reveal,.bubble,.pill,.chip,form,.trail b{transition:background-color 1s,color 1s}
 .toast{z-index:10}
@@ -196,8 +196,8 @@ function owlifyText(text, deep) {
   return text + (deep ? " " + deep : "");
 }
 
-const MOLE='<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><ellipse cx="40" cy="48" rx="22" ry="20" fill="#5b4a47"/><circle cx="40" cy="58" r="5.5" fill="#ff8aa8"/><circle cx="31" cy="45" r="3" fill="#fff"/><circle cx="49" cy="45" r="3" fill="#fff"/><circle cx="31.5" cy="45.5" r="1.4" fill="#231f4a"/><circle cx="49.5" cy="45.5" r="1.4" fill="#231f4a"/><ellipse cx="20" cy="66" rx="7" ry="5" fill="#f2a0b0"/><ellipse cx="60" cy="66" rx="7" ry="5" fill="#f2a0b0"/><path d="M0 80 Q40 62 80 80Z" fill="#3b2417"/></svg>';
-const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/><circle cx="67" cy="10" r="1.8" fill="#231f4a"/></svg>';
+const MOLE='<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><ellipse cx="40" cy="48" rx="22" ry="20" fill="#5b4a47"/><circle cx="40" cy="58" r="5.5" fill="#ff8aa8"/><circle cx="28" cy="42" r="2.5" fill="#fff"/><circle cx="52" cy="42" r="2.5" fill="#fff"/><path d="M30 32 q10 -12 20 0" fill="none" stroke="#231f4a" stroke-width="2.5" stroke-linecap="round"/><path d="M20 66 q10 -18 20 0 q8 12 16 0 q6 -10 16 0" fill="none" stroke="#e9b44a" stroke-width="6" stroke-linecap="round"/></svg>';
+const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/></svg>';
 
 function spawn() {
   const mole = Math.random() < 0.5;
@@ -226,27 +226,7 @@ function critter() {
   }, 7000 + Math.random() * 12000);
 }
 
-const SEEDS = ['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Pizza','Volcano','Lightning','Aurora','Solar eclipse','Rainbow','Glacier','Black hole','Moon','Saturn','Telescope','Bicycle','Chess','Origami','Piano','Lighthouse','Submarine','Dinosaur','Stonehenge','Bioluminescence','Mount Everest','Great Pyramid of Giza','Shark','Monkey','Robot','Castle','Dragon','Train','Unicorn','Pirate','Panda','Butterfly'];
-
-function isKidsTopic(topic) {
-  const t = topic.toLowerCase();
-  const kidsKeywords = ['shark', 'car', 'dinosaur', 'monkey', 'fish', 'seaside', 'beach', 'space', 'rocket', 'robot', 'castle', 'dragon', 'train', 'unicorn', 'pirate', 'panda', 'butterfly', 'animal', 'penguin', 'octopus', 'dolphin', 'volcano', 'rainbow', 'elephant', 'owl', 'bat', 'chameleon', 'turtle'];
-  return kidsKeywords.some(k => t.includes(k));
-}
-
-// Reliable direct illustration links for kids coloring mode
-const customColouringSheets = {
-    'shark': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Shark_cartoon.svg',
-    'monkey': 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Monkey_drawing.svg',
-    'dinosaur': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Dinosaur_cartoon.svg',
-    'cat': 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Cat_coloring_page.svg',
-    'dog': 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Dog_coloring_page.svg',
-    'octopus': 'https://upload.wikimedia.org/wikipedia/commons/8/82/Octopus_cartoon.svg',
-    'penguin': 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Penguin_cartoon.svg',
-    'lion': 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Lion_cartoon.svg',
-    'elephant': 'https://upload.wikimedia.org/wikipedia/commons/3/34/Elephant_cartoon.svg',
-    'butterfly': 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Butterfly_cartoon.svg'
-};
+const SEEDS = ['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Moon','Volcano','Astronaut'];
 
 // Maps topics to free, open-access GCSE resource hubs (Physics & Maths Tutor, Corbettmaths, Maths Genie)
 function getFreeGcseResource(topicTitle) {
@@ -275,7 +255,7 @@ const BADT = /^(List of|Lists of|Index of|Outline of|Timeline of|Glossary of|Tem
 const GEN = /^(United States|United Kingdom|France|Germany|China|India|Japan|Russia|Europe|Asia|Africa|English language)$/;
 
 const rude = t => BAD.test(t);
-const RUDE = ['Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Mind your whiskers! This is a nice burrow.'];
+const RUDE = ['Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Mind your manners or the burrow gets grumpy.','No swearing in the tunnel, please.'];
 let rudeDeck = [];
 const nextRude = () => { if (!rudeDeck.length) rudeDeck = shuf(RUDE); return rudeDeck.pop(); };
 
@@ -298,7 +278,7 @@ async function api(p) {
 const isDis = p => p.pageprops && ('disambiguation' in p.pageprops);
 
 async function resolve(q) {
-  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es\vert{}s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
+  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es|s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
   for (const t of c) {
     const d = await api({action:'query', titles:t, redirects:1, prop:'pageprops', ppprop:'disambiguation'});
     const p = d.query.pages[0];
@@ -309,20 +289,6 @@ async function resolve(q) {
   return ps.length ? ps[0].title : null;
 }
 
-async function getTopicImage(title) {
-  const key = title.toLowerCase().trim();
-  if (customColouringSheets[key]) {
-    return customColouringSheets[key];
-  }
-  try {
-    const d = await api({action:'query', titles:title, redirects:1, prop:'pageimages', piprop:'thumbnail|original', pithumbsize:800});
-    const p = d.query?.pages?.[0];
-    if (p?.thumbnail?.source) return p.thumbnail.source;
-    if (p?.original?.source) return p.original.source;
-  } catch(e){}
-  return null;
-}
-
 async function topic(title) {
   const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description', explaintext:1, pllimit:'max', plnamespace:0});
   const p = d.query.pages[0];
@@ -331,13 +297,12 @@ async function topic(title) {
   const src = p.title;
   const seen = new Set(S.trail.map(x => x.title));
   const links = shuf((p.links || []).map(l => l.title).filter(t => t !== src && !seen.has(t) && !BADT.test(t) && !GEN.test(t) && !DARK.test(t) && !BAD.test(t)));
-  const imgUrl = await getTopicImage(src);
-  
+
   let items = [];
   const pick = links.slice(0, 16);
   if (pick.length) {
     const e = await api({action:'query', titles:pick.join('|'), redirects:1, prop:'extracts|pageprops|description', exintro:1, explaintext:1, exlimit:'max', exsentences:3, ppprop:'disambiguation'});
-    items = ((e.query && e.query.pages) || []).filter(x => x.title !== src && !seen.has(x.title) && x.extract && x.extract.length > 80 && !isDis(x) && !/may refer to/.test(x.extract) && !DARK.test(x.title + ' ' + x.extract) && !BAD.test(x.title + ' ' + x.extract)).map(x => {
+    items = ((e.query && e.query.pages) || []).filter(x => x.title !== src && !seen.has(x.title) && x.extract && x.extract.length > 80 && !isDis(x) && !/may refer to/.test(x.extract) && !DARK.test(x.title) && !BAD.test(x.title)).map(x => {
       const k = base(x.title).toLowerCase();
       const b = all.find(s => s.toLowerCase().includes(k));
       return {title:x.title, desc:x.description||'', first:short(sents(x.extract)[0]||'', 220), bridge:b||'', score:(b?1:0)+Math.random()};
@@ -362,7 +327,7 @@ async function topic(title) {
   const txt = hook + ' ' + deep;
   let words = links.filter(t => !out.some(o => o.title === t) && new RegExp('\\b' + re(t) + '\\b').test(txt)).slice(0, 3);
   words = words.filter(w => !words.some(o => o !== w && o.includes(w)));
-  return {title:src, desc:p.description||'', hook, deep, words, first:short(all[0]||'', 200), next:out, allSents:all, img:imgUrl};
+  return {title:src, desc:p.description||'', hook, deep, words, first:short(all[0]||'', 200), next:out, allSents:all};
 }
 
 function lk(text, words) {
@@ -401,11 +366,9 @@ function start(msg) {
   $('fox').hidden = true;
   earth(null);
 
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun vector coloring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Free GCSE Revision Hub & Practice Sheets!';
-  $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
-  <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
-  <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
-  $('msg').textContent = msg || 'Beware the Fox. He quizzes bunnies who wander too far.';
+  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun colouring pages for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Quick GCSE-style help sheets and fact dives.';
+  $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:12px">${esc(modeDesc)}</p><form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form><div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
+  if (msg) $('app').insertAdjacentHTML('afterbegin', `<div class="bubble"><span aria-hidden="true">🐇</span><span>${esc(msg)}</span></div>`);
   $('f').onsubmit = e => { e.preventDefault(); go($('q').value); };
 }
 
@@ -432,7 +395,7 @@ async function go(q) {
     S.trail = [{title:t}];
     load();
   } catch(e) {
-    fail();
+    fail(e);
   }
 }
 
@@ -443,8 +406,8 @@ function dig(t) {
   load();
 }
 
-function fail() {
-  $('app').innerHTML = (S.trail.length ? trailHtml() : '') + `<div class="bubble"><span aria-hidden="true">🐇</span><span>The tunnel collapsed! Check your connection and try again?</span></div><button class="dig" data-retry="1">Try again</button><button class="shut" style="margin-top:8px;width:100%" data-home="1">Start over</button>`;
+function fail(e) {
+  $('app').innerHTML = (S.trail.length ? trailHtml() : '') + `<div class="bubble"><span aria-hidden="true">🐇</span><span>The tunnel collapsed! Check your connection and try again?<br><small>Reason: ${esc(e && e.message || 'unknown')}</small></span></div>`;
 }
 
 async function load() {
@@ -466,82 +429,8 @@ async function load() {
     render();
   } catch(e) {
     clearInterval(tk);
-    if (tok === S.tok) fail();
+    if (tok === S.tok) fail(e);
   }
-}
-
-function printColouringSheet(topicTitle, imgUrl) {
-  if (!imgUrl) return;
-  const win = window.open('', '_blank');
-  if (!win) { toast('Please allow popups to print!'); return; }
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Colouring Page - ${esc(topicTitle)}</title><style>
-    @page { size: A4 portrait; margin: 10mm; }
-    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; margin:0; background: #fff; }
-    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10mm; margin-bottom: 16px; }
-    h1 { font-size: 36px; margin: 0; color: #ff8a1f; }
-    .box { border: 4px solid #231f4a; border-radius: 20px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 480px; display: flex; align-items: center; justify-content: center; }
-    img { max-width: 100%; max-height: 600px; object-fit: contain; filter: grayscale(100%) contrast(250%) brightness(110%); }
-    .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
-    @media print { .btn-print { display: none; } }
-  </style></head><body>
-    <button class="btn-print" onclick="window.print()">🖨 Print Colouring Sheet</button>
-    <div class="header"><h1>🎨 ${esc(topicTitle)}</h1><p>Rabbithole Colouring Adventure</p></div>
-    <div class="box"><img src="${imgUrl}" alt="${esc(topicTitle)}"></div>
-  </body></html>`);
-  win.document.close();
-}
-
-// Opens the free open-access GCSE resource hub for the topic
-function openFreeGcseHub(topicTitle) {
-  const res = getFreeGcseResource(topicTitle);
-  window.open(res.url, '_blank', 'noopener,noreferrer');
-}
-
-function render() {
-  const n = S.cur;
-  const len = S.trail.length;
-  earth(len - 1);
-  if (S.fox && len >= 2 && !S.met) { S.met = true; fox(n.title); }
-  if (len >= 5 && !S.asked.has(len)) { S.asked.add(len); setTimeout(() => toast(rnd(HOP)), 600); }
-
-  let mainHook = n.hook;
-  let mainDeep = n.deep;
-
-  if (S.mode === 'bunny') {
-    mainHook = kidifyText(n.hook);
-    mainDeep = kidifyText(n.deep);
-  } else if (S.mode === 'owl') {
-    mainHook = owlifyText(n.hook, n.deep);
-  }
-
-  let html = `<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>${esc(n.title)}</h2><p class="src">${esc(n.desc||'Wikipedia entry')}</p>
-  <p class="hook">${lk(mainHook, n.words)}</p>
-  ${S.deep ? `<div class="more"><p>${lk(mainDeep, n.words)}</p></div>` : ''}`;
-
-  if (!S.deep) {
-    html += `<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>`;
-  }
-
-  if (S.mode === 'bunny' && isKidsTopic(n.title) && n.img) {
-    html += `<div style="margin-top:12px"><button class="dl-btn" data-print-colour="1">🖍️ Print Free ${esc(n.title)} Colouring Sheet</button></div>`;
-  } else if (S.mode === 'rabbit') {
-    const freeRes = getFreeGcseResource(n.title);
-    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-free-gcse="1">📑 Free GCSE PDFs: ${esc(freeRes.name)}</button></div>`;
-  }
-
-  html += `<div class="acts2"><a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>`;
-
-  if (n.next.length) {
-    html += `<h3 class="next">Which tunnel next?</h3><div class="tunnels">`;
-    n.next.forEach(x => {
-      let nextDesc = x.first;
-      if (S.mode === 'bunny') nextDesc = kidifyText(x.first);
-      html += `<div class="card"><h3>${esc(x.title)}</h3><p class="why">${esc(x.bridge ? Q[0].replace('X', n.title) : 'A linked tunnel from here.')}</p><div class="fact"><p>${lk(nextDesc, n.words)}</p></div><button class="dig" data-t="${esc(x.title)}">Dig here 🥕</button></div>`;
-    });
-    html += `</div>`;
-  }
-
-  $('app').innerHTML = trailHtml() + html;
 }
 
 async function fox(t) {
@@ -612,8 +501,6 @@ document.addEventListener('click', e => {
   if (b.dataset.fopt != null) { answerFox(+b.dataset.fopt); return; }
   if (b.dataset.foxoff) { S.fox = false; $('foxbtn').textContent = '🦊 off'; $('foxbtn').ariaPressed = 'false';$('fox').hidden = true; toast('Fox quizzes turned off.'); return; }
   if (b.dataset.close) { $('sheet').hidden = true; return; }
-  if (b.dataset.retry) { load(); return; }
-  if (b.dataset.home) { start(); return; }
   if (b.dataset.mode) {
     document.querySelectorAll('.mode-btn').forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-checked','false'); });
     b.classList.add('active');
@@ -622,14 +509,149 @@ document.addEventListener('click', e => {
     if (S.cur) render(); else start();
     return;
   }
-  if (b.dataset.printColour) { printColouringSheet(S.cur.title, S.cur.img); return; }
-  if (b.dataset.freeGcse) { openFreeGcseHub(S.cur.title); return; }
 });
 
-$('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').ariaPressed = String(S.fox); toast(S.fox ? 'Fox quizzes on!' : 'Fox quizzes off!'); };
+$('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').ariaPressed = String(S.fox); toast(S.fox ? 'Fox quizzes are on.' : 'Fox quizzes are off.'); if (!S.fox) $('fox').hidden = true; };
 
 critter();
 start();
+</script>
+<script>
+/* Bunny colouring pages + Rabbit GCSE help sheets */
+(function () {
+  var css = document.createElement('style');
+  css.textContent =
+    '.sv{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:#fff;color:#231f4a;overflow:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 30px;font:500 17px/1.5 Nunito,system-ui,sans-serif}' +
+    '.sv .in{max-width:560px;margin:0 auto}' +
+    '.sv h1{font:700 30px Fredoka,sans-serif;margin:8px 0;text-align:center;color:#231f4a}' +
+    '.sv h2{font:600 20px Fredoka,sans-serif;margin:16px 0 6px}' +
+    '.sv svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;border:4px dashed #ff8a1f;border-radius:20px;background:#fff}' +
+    '.sv .bar2{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}' +
+    '.sv .cap{text-align:center;color:#5b5788;margin:8px 0}' +
+    '.sv li{margin:6px 0}.sv .ans{font-size:13px;color:#5b5788;margin-top:14px}' +
+    '@media print{body>*:not(#sv){display:none!important}.sv{position:static;overflow:visible;padding:0}.sv .noprint{display:none!important}.sv svg{border:3px solid #231f4a;max-width:100%}}';
+  document.head.appendChild(css);
+
+  var sv = document.createElement('div');
+  sv.className = 'sv';
+  sv.id = 'sv';
+  sv.hidden = true;
+  document.body.appendChild(sv);
+
+  var ROOT = '<svg viewBox="0 0 300 300" fill="#fff" stroke="#231f4a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" role="img" aria-label="Colouring picture">';
+  var N = ' fill="none"';
+  var ART = {
+    bun: '<ellipse cx="108" cy="70" rx="24" ry="62"/><ellipse cx="192" cy="70" rx="24" ry="62"/><circle cx="150" cy="185" r="85"/><circle cx="122" cy="170" r="10"/><circle cx="178" cy="170" r="10"/><circle cx="150" cy="198" r="9"/><path d="M150 207q-12 18-30 10M150 207q12 18 30 10"' + N + '/>',
+    fish: '<path d="M232 150L285 105 270 150 285 195Z"/><ellipse cx="150" cy="150" rx="90" ry="55"/><path d="M130 100L160 50 180 103Z"/><path d="M140 200L120 238 172 205Z"/><circle cx="105" cy="140" r="9"/><path d="M70 168q20 12 40 0"' + N + '/><circle cx="55" cy="85" r="12"/><circle cx="35" cy="55" r="8"/>',
+    oct: '<rect x="45" y="140" width="36" height="130" rx="18"/><rect x="95" y="140" width="36" height="130" rx="18"/><rect x="145" y="140" width="36" height="130" rx="18"/><rect x="195" y="140" width="36" height="130" rx="18"/><rect x="235" y="140" width="30" height="110" rx="15"/><circle cx="150" cy="105" r="75"/><circle cx="122" cy="100" r="10"/><circle cx="178" cy="100" r="10"/><path d="M125 135q25 20 50 0"' + N + '/><circle cx="150" cy="55" r="8"/>',
+    bfly: '<ellipse cx="95" cy="110" rx="65" ry="55" transform="rotate(-20 95 110)"/><ellipse cx="205" cy="110" rx="65" ry="55" transform="rotate(20 205 110)"/><ellipse cx="110" cy="205" rx="45" ry="40"/><ellipse cx="190" cy="205" rx="45" ry="40"/><ellipse cx="150" cy="155" rx="12" ry="70"/><path d="M145 90q-20-40-35-45M155 90q20-40 35-45"' + N + '/><circle cx="85" cy="105" r="15"/><circle cx="215" cy="105" r="15"/>',
+    peng: '<ellipse cx="72" cy="180" rx="16" ry="50" transform="rotate(15 72 180)"/><ellipse cx="228" cy="180" rx="16" ry="50" transform="rotate(-15 228 180)"/><ellipse cx="150" cy="165" rx="80" ry="105"/><ellipse cx="150" cy="185" rx="52" ry="78"/><circle cx="125" cy="115" r="9"/><circle cx="175" cy="115" r="9"/><path d="M138 133h24l-12 20Z"/><ellipse cx="115" cy="272" rx="28" ry="10"/><ellipse cx="185" cy="272" rx="28" ry="10"/>',
+    cat: '<path d="M80 110L85 40 135 85Z"/><path d="M220 110L215 40 165 85Z"/><circle cx="150" cy="160" r="85"/><circle cx="120" cy="150" r="10"/><circle cx="180" cy="150" r="10"/><path d="M140 175h20l-10 13Z"/><path d="M150 188q-12 15-28 8M150 188q12 15 28 8M55 170L110 178M55 195L110 188M245 170L190 178M245 195L190 188"' + N + '/>',
+    ele: '<ellipse cx="68" cy="140" rx="45" ry="62"/><ellipse cx="232" cy="140" rx="45" ry="62"/><circle cx="150" cy="130" r="75"/><rect x="128" y="165" width="44" height="115" rx="22"/><circle cx="122" cy="115" r="9"/><circle cx="178" cy="115" r="9"/><path d="M105 190q-15 25 5 40M195 190q15 25-5 40"' + N + '/>',
+    rkt: '<path d="M150 30Q210 90 200 200H100Q90 90 150 30Z"/><circle cx="150" cy="110" r="25"/><path d="M100 160L60 230 100 210Z"/><path d="M200 160L240 230 200 210Z"/><path d="M120 205L150 275 180 205Z"/><circle cx="40" cy="50" r="8"/><circle cx="260" cy="70" r="8"/><circle cx="250" cy="150" r="6"/>',
+    monkey: '<circle cx="60" cy="140" r="30"/><circle cx="240" cy="140" r="30"/><circle cx="60" cy="140" r="14"/><circle cx="240" cy="140" r="14"/><circle cx="150" cy="150" r="85"/><ellipse cx="150" cy="178" rx="55" ry="45"/><circle cx="125" cy="140" r="9"/><circle cx="175" cy="140" r="9"/><circle cx="140" cy="170" r="3"/><circle cx="160" cy="170" r="3"/><path d="M125 195q25 20 50 0" fill="none"/>',
+    dog: '<ellipse cx="70" cy="135" rx="28" ry="60" transform="rotate(15 70 135)"/><ellipse cx="230" cy="135" rx="28" ry="60" transform="rotate(-15 230 135)"/><circle cx="150" cy="150" r="80"/><ellipse cx="150" cy="192" rx="42" ry="32"/><ellipse cx="150" cy="176" rx="16" ry="11"/><circle cx="120" cy="138" r="9"/><circle cx="180" cy="138" r="9"/><ellipse cx="150" cy="222" rx="12" ry="14"/><path d="M150 187v14M150 201q-14 12-28 4M150 201q14 12 28 4" fill="none"/>',
+    lion: '<circle cx="150" cy="150" r="115"/><circle cx="80" cy="62" r="20"/><circle cx="220" cy="62" r="20"/><circle cx="150" cy="155" r="72"/><circle cx="125" cy="145" r="8"/><circle cx="175" cy="145" r="8"/><path d="M138 165h24l-12 15Z"/><path d="M150 180q-12 16-26 8M150 180q12 16 26 8" fill="none"/>',
+    dino: '<path d="M50 190L8 245 70 230Z"/><rect x="85" y="225" width="36" height="55" rx="12"/><rect x="150" y="225" width="36" height="55" rx="12"/><ellipse cx="130" cy="200" rx="90" ry="50"/><rect x="190" y="70" width="40" height="140" rx="20"/><ellipse cx="225" cy="65" rx="36" ry="26"/><circle cx="238" cy="58" r="6"/><path d="M100 155L115 125 130 152M135 152L150 122 165 150" fill="none"/><path d="M250 74q-8 6-18 4" fill="none"/>',
+    bear: '<circle cx="80" cy="70" r="28"/><circle cx="220" cy="70" r="28"/><circle cx="150" cy="160" r="88"/><ellipse cx="118" cy="150" rx="22" ry="28" transform="rotate(-20 118 150)"/><ellipse cx="182" cy="150" rx="22" ry="28" transform="rotate(20 182 150)"/><circle cx="118" cy="152" r="8"/><circle cx="182" cy="152" r="8"/><ellipse cx="150" cy="185" rx="12" ry="8"/><path d="M150 193q-10 14-24 8M150 193q10 14 24 8" fill="none"/>',
+    scene: '<circle cx="70" cy="70" r="34"/><path d="M70 15v12M70 113v12M15 70h12M113 70h12M31 31l9 9M109 109l9 9M31 109l9-9M109 31l9-9"' + N + '/><circle cx="195" cy="85" r="22"/><circle cx="225" cy="80" r="28"/><circle cx="255" cy="90" r="20"/><path d="M0 300Q150 170 300 300Z"/><path d="M150 290V220"' + N + '/><circle cx="150" cy="170" r="18"/><circle cx="175" cy="188" r="18"/><circle cx="165" cy="214" r="18"/><circle cx="135" cy="214" r="18"/><circle cx="125" cy="188" r="18"/><circle cx="150" cy="197" r="14"/>'
+  };
+  var AM = [
+    ['bun', /bunn|rabbit|\bhare\b/], ['fish', /shark|fish|whale|dolphin|ocean|\bsea\b|beach/],
+    ['oct', /octopus|squid|jelly|kraken/], ['bfly', /butterfl|\bmoths?\b/],
+    ['peng', /penguin/], ['cat', /\bcats?\b|kitten/], ['dog', /\bdogs?\b|puppy|puppies/],
+    ['lion', /\blions?\b/], ['monkey', /monkey|chimp/], ['dino', /dinosaur|brontosaur|diplodocus/],
+    ['bear', /\bbears?\b|panda/], ['ele', /elephant/], ['rkt', /rocket|astronaut|\bspace\b|\bmoon\b|\bmars\b/]
+  ];
+  function artFor(t) {
+    t = t.toLowerCase();
+    for (var i = 0; i < AM.length; i++) if (AM[i][1].test(t)) return AM[i][0];
+    return 'scene';
+  }
+
+  function openSheet(inner) {
+    sv.innerHTML = '<div class="in"><div class="noprint bar2"><button class="dl-btn" data-printnow="1">🖨 Print</button><button class="shut" data-closesv="1">Close</button></div>' + inner + '</div>';
+    sv.hidden = false;
+    sv.scrollTop = 0;
+  }
+
+  function colourSheet() {
+    var t = S.cur.title;
+    var k = artFor(t);
+    openSheet('<h1>🎨 Colour in: ' + esc(t) + '</h1>' + ROOT + ART[k] + '</svg><p class="cap">' + (k === 'scene' ? 'I haven\'t drawn a ' + esc(t) + ' yet, so here is a sunny day to colour in instead!' : 'Rabbithole Bunny Colouring Page. Use your brightest colours!') + '</p>');
+  }
+
+  function helpSheet() {
+    var n = S.cur, r = getFreeGcseResource(n.title);
+    var facts = (n.allSents || []).slice(0, 6);
+    var terms = [];
+    (n.words || []).concat((n.next || []).map(function (x) { return x.title; })).forEach(function (w) {
+      w = base(w);
+      if (w.length > 3 && terms.indexOf(w) < 0) terms.push(w);
+    });
+    var qs = [], ans = [];
+    facts.forEach(function (s) {
+      if (qs.length >= 3) return;
+      for (var i = 0; i < terms.length; i++) {
+        var rx = new RegExp('\\b' + re(terms[i]) + '\\b', 'i');
+        if (rx.test(s)) { qs.push(s.replace(rx, '__________')); ans.push(terms[i]); return; }
+      }
+    });
+    qs.push('Explain ' + n.title + ' in your own words (2 or 3 sentences).');
+    qs.push('Write one question you still have about ' + n.title + '.');
+    openSheet(
+      '<h1>📑 Help sheet: ' + esc(n.title) + '</h1><p class="cap">' + esc(n.desc || '') + '</p>' +
+      '<h2>Key facts</h2><ul>' + facts.slice(0, 4).map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' +
+      (terms.length ? '<h2>Key words</h2><p>' + terms.slice(0, 6).map(esc).join(' • ') + '</p>' : '') +
+      '<h2>Test yourself</h2><ol>' + qs.map(function (q) { return '<li>' + esc(q) + '<br><br></li>'; }).join('') + '</ol>' +
+      (ans.length ? '<p class="ans">Gaps answers: ' + ans.map(esc).join(', ') + '</p>' : '') +
+      '<div class="noprint" style="text-align:center;margin-top:14px"><a class="dl-btn" href="' + r.url + '" target="_blank" rel="noopener noreferrer">Free GCSE past papers &amp; notes: ' + esc(r.name) + '</a></div>'
+    );
+  }
+
+  window.getTopicImage = async function () { return null; };
+
+  window.render = function () {
+    var n = S.cur, len = S.trail.length;
+    earth(len - 1);
+    if (S.fox && len >= 2 && !S.met) { S.met = true; fox(n.title); }
+    if (len >= 5 && !S.asked.has(len)) { S.asked.add(len); setTimeout(function () { toast(rnd(HOP)); }, 600); }
+    var mainHook = n.hook, mainDeep = n.deep;
+    if (S.mode === 'bunny') { mainHook = kidifyText(n.hook); mainDeep = kidifyText(n.deep); }
+    else if (S.mode === 'owl') { mainHook = owlifyText(n.hook, n.deep); }
+
+    var html = '<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>' + esc(n.title) + '</h2><p class="src">' + esc(n.desc || 'Wikipedia entry') + '</p>' +
+      '<p class="hook">' + lk(mainHook, n.words) + '</p>' +
+      (S.deep ? '<div class="more"><p>' + lk(mainDeep, n.words) + '</p></div>' : '');
+    if (!S.deep) html += '<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>';
+
+    if (S.mode === 'bunny') html += '<div style="margin-top:12px"><button class="dl-btn" data-colour="1">🖍️ Colour in ' + esc(n.title) + '</button></div>';
+    else if (S.mode === 'rabbit') html += '<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-help="1">📑 GCSE help sheet</button></div>';
+
+    html += '<div class="acts2"><a class="wiki" href="' + wurl(n.title) + '" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>';
+
+    if (n.next.length) {
+      html += '<h3 class="next">Which tunnel next?</h3><div class="tunnels">';
+      n.next.forEach(function (x) {
+        var d = S.mode === 'bunny' ? kidifyText(x.first) : x.first;
+        html += '<div class="card"><h3>' + esc(x.title) + '</h3><p class="why">' + esc(x.bridge ? Q[0].replace('X', n.title) : 'A linked tunnel from here.') + '</p><div class="fact"><p>' + lk(d, n.words) + '</p></div><button class="dig" data-t="' + esc(x.title) + '">Dig down here 🥕</button></div>';
+      });
+      html += '</div>';
+    }
+    $('app').innerHTML = trailHtml() + html;
+  };
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.colour && S.cur) colourSheet();
+    else if (b.dataset.help && S.cur) helpSheet();
+    else if (b.dataset.printnow) window.print();
+    else if (b.dataset.closesv) sv.hidden = true;
+  });
+
+  if (S.cur) window.render();
+})();
 </script>
 </body>
 </html>
