@@ -20,7 +20,6 @@ h1,h2,h3,button,.pill{font-family:Fredoka,"Trebuchet MS",sans-serif}
 .logo{font:700 24px Fredoka,sans-serif;background:none;border:0;color:var(--ink);cursor:pointer;padding:4px}
 .pill{background:var(--panel);border-radius:999px;padding:4px 12px;font-weight:600;font-size:15px}
 
-/* Mode Switcher Slider */
 .mode-switch{display:inline-flex;background:var(--panel);padding:3px;border-radius:999px;box-shadow:0 2px 0 rgba(0,0,0,0.06)}
 .mode-btn{background:none;border:0;padding:5px 12px;border-radius:999px;font:600 14px Fredoka,sans-serif;color:var(--muted);cursor:pointer;transition:all 0.2s ease}
 .mode-btn.active{background:var(--carrot);color:#231f4a;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
@@ -91,7 +90,6 @@ html{-webkit-text-size-adjust:100%}
 button,input{-webkit-appearance:none;appearance:none}
 input{border-radius:0;-webkit-tap-highlight-color:transparent}
 button,a{-webkit-tap-highlight-color:transparent}
-a.ws{color:inherit;font-size:14px}
 
 html{background:#7fd0ff}
 body{background:transparent}
@@ -124,7 +122,6 @@ main{max-width:1120px;padding:24px 32px 90px}
 .tunnels .card:hover{transform:rotate(0) translateY(-6px) scale(1.02)}
 .tunnels>.bubble{grid-column:1/-1}
 }
-@media (min-width:820px) and (prefers-reduced-motion:reduce){.tunnels .card{transition:none}}
 </style>
 </head>
 <body>
@@ -133,7 +130,6 @@ main{max-width:1120px;padding:24px 32px 90px}
   <div class="top">
     <button class="logo" id="home" aria-label="Back to start">🐇 Rabbithole</button>
     
-    <!-- Mode Switcher Slider -->
     <div class="mode-switch" id="modeSwitch" role="radiogroup" aria-label="Difficulty Mode">
       <button class="mode-btn active" data-mode="bunny" role="radio" aria-checked="true">🐰 Bunny</button>
       <button class="mode-btn" data-mode="rabbit" role="radio" aria-checked="false">🐇 Rabbit</button>
@@ -147,28 +143,37 @@ main{max-width:1120px;padding:24px 32px 90px}
 <aside class="sheet" id="sheet" hidden></aside>
 <div class="fox" id="fox" role="dialog" aria-modal="true" aria-labelledby="fq" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
-<script>
-const $=id=>document.getElementById(id);
-const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);
-const rnd=a=>a[Math.floor(Math.random()*a.length)];
-const shuf=a=>a.slice().sort(()=>Math.random()-.5);
-const re=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-const S={trail:[],cur:null,carrots:0,lives:3,fox:true,met:false,asked:new Set(),pool:[],deep:false,away:false,q:'',ft:null,ct:null,tok:0,fq:null,fopts:[],mode:'bunny'};
-const LAYERS=['Surface','Topsoil','Subsoil','Clay','Gravel','Bedrock','Deep rock','Earth’s core 🔥'];
-const TOK=[{ink:'#231f4a',muted:'#4a4680',panel:'#ffffff'},{ink:'#fff4e5',muted:'#ead7c0',panel:'rgba(28,14,8,.62)'},{ink:'#f2eefc',muted:'#cbc6e8',panel:'rgba(10,8,18,.64)'}];
-let layer=0;
 
-function earth(h){
-  const d=h==null?0:(h===0?1:Math.min(7,1+h*.5)),idx=Math.floor(d),t=idx===0?TOK[0]:idx<5?TOK[1]:TOK[2],st=document.documentElement.style;
-  $('earth').style.backgroundPositionY=(d/7*100)+'%';
-  st.setProperty('--ink',t.ink);st.setProperty('--muted',t.muted);st.setProperty('--panel',t.panel);
-  document.body.classList.toggle('under',idx>0);
-  $('layer').hidden=idx===0;$('layer').textContent='⬇ '+LAYERS[idx];
-  if(idx>layer&&idx>=2)toast('🕳 You have reached the '+LAYERS[idx]+'...');
-  layer=idx;
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rnd = a => a[Math.floor(Math.random() * a.length)];
+const shuf = a => a.slice().sort(() => Math.random() - 0.5);
+const re = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const S = {trail:[], cur:null, carrots:0, lives:3, fox:true, met:false, asked:new Set(), pool:[], deep:false, q:'', ft:null, ct:null, tok:0, fq:null, fopts:[], mode:'bunny'};
+const LAYERS = ['Surface','Topsoil','Subsoil','Clay','Gravel','Bedrock','Deep rock','Earth’s core 🔥'];
+const TOK = [{ink:'#231f4a',muted:'#4a4680',panel:'#ffffff'},{ink:'#fff4e5',muted:'#ead7c0',panel:'rgba(28,14,8,.62)'},{ink:'#f2eefc',muted:'#cbc6e8',panel:'rgba(10,8,18,.64)'}];
+let layer = 0;
+
+function earth(h) {
+  const d = h == null ? 0 : (h === 0 ? 1 : Math.min(7, 1 + h * 0.5));
+  const idx = Math.floor(d);
+  const t = idx === 0 ? TOK[0] : idx < 5 ? TOK[1] : TOK[2];
+  const st = document.documentElement.style;
+  $('earth').style.backgroundPositionY = (d / 7 * 100) + '%';
+  st.setProperty('--ink', t.ink);
+  st.setProperty('--muted', t.muted);
+  st.setProperty('--panel', t.panel);
+  document.body.classList.toggle('under', idx > 0);
+  $('layer').hidden = idx === 0;
+  $('layer').textContent = '⬇ ' + LAYERS[idx];
+  if (idx > layer && idx >= 2) toast('🕳 You have reached the ' + LAYERS[idx] + '...');
+  layer = idx;
 }
 
 function simplifyText(text) {
+  if (!text) return '';
   return text
     .replace(/utiliz(e|ing|ed)/gi, 'use')
     .replace(/subsequently/gi, 'then')
@@ -178,8 +183,7 @@ function simplifyText(text) {
     .replace(/characteristics/gi, 'traits')
     .replace(/numeral|numerical/gi, 'number')
     .replace(/indigenous/gi, 'native')
-    .replace(/substantially/gi, 'a lot')
-    .replace(/([.!?])\s+/g, "$1 ");
+    .replace(/substantially/gi, 'a lot');
 }
 
 function kidifyText(text) {
@@ -195,20 +199,38 @@ function owlifyText(text, deep) {
 const MOLE='<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><ellipse cx="40" cy="48" rx="22" ry="20" fill="#5b4a47"/><circle cx="40" cy="58" r="5.5" fill="#ff8aa8"/><circle cx="31" cy="45" r="3" fill="#fff"/><circle cx="49" cy="45" r="3" fill="#fff"/><circle cx="31.5" cy="45.5" r="1.4" fill="#231f4a"/><circle cx="49.5" cy="45.5" r="1.4" fill="#231f4a"/><ellipse cx="20" cy="66" rx="7" ry="5" fill="#f2a0b0"/><ellipse cx="60" cy="66" rx="7" ry="5" fill="#f2a0b0"/><path d="M0 80 Q40 62 80 80Z" fill="#3b2417"/></svg>';
 const WORM='<svg viewBox="0 0 76 26" width="76" height="26" aria-hidden="true"><path d="M5 15 q8 -13 16 0 t16 0 t16 0 t14 0" fill="none" stroke="#e8909f" stroke-width="7" stroke-linecap="round"/><circle cx="67" cy="10" r="1.8" fill="#231f4a"/></svg>';
 
-function spawn(){
-  const mole=Math.random()<.5,el=document.createElement('button');
-  el.className='crit '+(mole?'mole':'worm');el.setAttribute('aria-label',mole?'A mole':'A worm');el.innerHTML=mole?MOLE:WORM;
-  if(mole)el.style.left=(8+Math.random()*72)+'%';else el.style.top=(12+Math.random()*70)+'%';
-  el.onclick=()=>{S.carrots++;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;toast(mole?'🥕 +1! You befriended a mole.':'🥕 +1! A worm says hi.');el.remove()};
-  document.body.appendChild(el);setTimeout(()=>el.remove(),mole?3600:9000);
+function spawn() {
+  const mole = Math.random() < 0.5;
+  const el = document.createElement('button');
+  el.className = 'crit ' + (mole ? 'mole' : 'worm');
+  el.setAttribute('aria-label', mole ? 'A mole' : 'A worm');
+  el.innerHTML = mole ? MOLE : WORM;
+  if (mole) el.style.left = (8 + Math.random() * 72) + '%';
+  else el.style.top = (12 + Math.random() * 70) + '%';
+  
+  el.onclick = () => {
+    S.carrots++;
+    $('carrots').hidden = false;
+    $('carrots').textContent = '🥕 ' + S.carrots;
+    toast(mole ? '🥕 +1! You befriended a mole.' : '🥕 +1! A worm says hi.');
+    el.remove();
+  };
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), mole ? 3600 : 9000);
 }
-function critter(){setTimeout(()=>{if(layer>=1&&!document.hidden)spawn();critter()},7000+Math.random()*12000)}
 
-const SEEDS=['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Pizza','Volcano','Lightning','Aurora','Solar eclipse','Rainbow','Glacier','Black hole','Moon','Saturn','Telescope','Printing press','Bicycle','Zipper','Velcro','Chess','Origami','Piano','Lighthouse','Submarine','Great Wall of China','Alan Turing','Enigma machine','Dinosaur','Woolly mammoth','Stonehenge','Bermuda Triangle','Loch Ness Monster','Rubik\'s Cube','Bioluminescence','Quicksand','Sundial','Typewriter','Mount Everest','Great Pyramid of Giza','Car','Shark','Monkey','Seaside','Fish','Rocket','Space','Robot','Castle','Dragon','Train','Unicorn','Pirate','Panda','Butterfly'];
+function critter() {
+  setTimeout(() => {
+    if (layer >= 1 && !document.hidden) spawn();
+    critter();
+  }, 7000 + Math.random() * 12000);
+}
+
+const SEEDS = ['Octopus','Platypus','Tardigrade','Penguin','Dolphin','Jellyfish','Chameleon','Axolotl','Narwhal','Sloth','Kangaroo','Bat','Elephant','Owl','Fox','Honey','Cheese','Chocolate','Coffee','Pizza','Volcano','Lightning','Aurora','Solar eclipse','Rainbow','Glacier','Black hole','Moon','Saturn','Telescope','Bicycle','Chess','Origami','Piano','Lighthouse','Submarine','Dinosaur','Stonehenge','Bioluminescence','Mount Everest','Great Pyramid of Giza','Shark','Monkey','Robot','Castle','Dragon','Train','Unicorn','Pirate','Panda','Butterfly'];
 
 function isKidsTopic(topic) {
   const t = topic.toLowerCase();
-  const kidsKeywords = ['shark', 'car', 'dinosaur', 'monkey', 'fish', 'seaside', 'beach', 'space', 'rocket', 'robot', 'castle', 'dragon', 'train', 'unicorn', 'pirate', 'panda', 'butterfly', 'animal', 'cat', 'dog', 'penguin', 'octopus', 'dolphin', 'volcano', 'rainbow', 'elephant', 'owl', 'bat', 'chameleon', 'turtle'];
+  const kidsKeywords = ['shark', 'car', 'dinosaur', 'monkey', 'fish', 'seaside', 'beach', 'space', 'rocket', 'robot', 'castle', 'dragon', 'train', 'unicorn', 'pirate', 'panda', 'butterfly', 'animal', 'penguin', 'octopus', 'dolphin', 'volcano', 'rainbow', 'elephant', 'owl', 'bat', 'chameleon', 'turtle'];
   return kidsKeywords.some(k => t.includes(k));
 }
 
@@ -217,11 +239,11 @@ const CURRICULUM_DB = [
   { keywords: ['dinosaur', 'fossil', 'evolution', 'dna', 'genetics'], subject: 'GCSE Biology', topic: 'Inheritance, Variation & Evolution' },
   { keywords: ['shark', 'fish', 'octopus', 'dolphin', 'ocean', 'ecosystem', 'biodiversity'], subject: 'GCSE Biology', topic: 'Ecology & Marine Ecosystems' },
   { keywords: ['black hole', 'saturn', 'moon', 'solar system', 'star', 'space', 'gravity', 'sun'], subject: 'GCSE Physics', topic: 'Space Physics & Gravitational Fields' },
-  { keywords: ['alan turing', 'enigma', 'computer', 'code', 'algorithm'], subject: 'GCSE Computer Science', topic: 'Algorithms, Logic & Cryptography' },
+  { keywords: ['computer', 'code', 'algorithm'], subject: 'GCSE Computer Science', topic: 'Algorithms, Logic & Cryptography' },
   { keywords: ['car', 'bicycle', 'motion', 'speed', 'energy', 'force'], subject: 'GCSE Physics', topic: 'Forces, Motion & Energy Transfer' },
-  { keywords: ['pyramid', 'ancient egypt', 'great wall', 'castle', 'stonehenge'], subject: 'KS3 / GCSE History', topic: 'Ancient Civilisations & Historical Architecture' },
+  { keywords: ['pyramid', 'castle', 'stonehenge'], subject: 'KS3 / GCSE History', topic: 'Ancient Civilisations & Architecture' },
   { keywords: ['lightning', 'electricity', 'circuit', 'magnet'], subject: 'GCSE Physics', topic: 'Electricity & Magnetism' },
-  { keywords: ['glacier', 'seaside', 'coastal', 'weathering', 'erosion'], subject: 'GCSE Geography', topic: 'Physical Landscapes & Coastal Processes' }
+  { keywords: ['glacier', 'seaside', 'coastal', 'erosion'], subject: 'GCSE Geography', topic: 'Physical Landscapes & Coastal Processes' }
 ];
 
 function getCurriculumInfo(topicTitle) {
@@ -229,363 +251,201 @@ function getCurriculumInfo(topicTitle) {
   for (const item of CURRICULUM_DB) {
     if (item.keywords.some(k => t.includes(k))) return item;
   }
-  return { subject: 'GCSE General Science & Humanities', topic: 'Key Core Curriculum Concepts' };
+  return { subject: 'GCSE Science & Humanities', topic: 'Key Core Curriculum Concepts' };
 }
 
-const BAD=/\b(fuck\w*|shit\w*|bullshit|bitch\w*|bastard\w*|asshole\w*|arsehole\w*|dick(head)?s?|pussy|pussies|cunt\w*|wank\w*|twat\w*|whore\w*|slut\w*|porn\w*|xxx|nudes?|nsfw|hentai|erotic\w*|milf|nigg\w*|fag(got)?s?|retard\w*|cocks?|tits?|boobs?|sex|sexy|sexual|prostitut\w*)\b/i;
-const DARK=/\b(suicide|murder\w*|massacre|genocide|rape\w*|terroris\w*|holocaust|torture|abuse|slavery|serial killer|execution|shooting|assassin\w*)\b/i;
-const BADT=/^(List of|Lists of|Index of|Outline of|Timeline of|Glossary of|Template|Category|Help|Wikipedia|Portal|File|Draft|ISO |ISBN|Doi|PMID|S2CID|Bibcode|OCLC)|^\d|:|disambiguation|\(identifier\)/i;
-const GEN=/^(United States|United Kingdom|France|Germany|Italy|Spain|China|India|Japan|Russia|Europe|Asia|Africa|Latin|English language|Greek language)$/;
-const rude=t=>{const n=t.toLowerCase().replace(/[@4]/g,'a').replace(/[$5]/g,'s').replace(/0/g,'o').replace(/[1!|]/g,'i').replace(/3/g,'e');return BAD.test(t)||BAD.test(n)};
-const RUDE=['Do you kiss your mother with that mouth? 🐇','Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Somebody woke up on the wrong side of the burrow.','Bunny is covering his ears. La la la, not listening!','Granny Bunny just dropped her knitting. Try again, politely!','Is that how you talk at the dinner table? The carrots are blushing.','Mind your whiskers! This is a nice burrow.','Hop it! That kind of word never got anyone down a rabbit hole.','Gasp! I am telling the Owl on you.'];
-let rudeDeck=[],lastRude='';
-const nextRude=()=>{if(!rudeDeck.length){rudeDeck=shuf(RUDE);if(rudeDeck[rudeDeck.length-1]===lastRude)rudeDeck.unshift(rudeDeck.pop())}return lastRude=rudeDeck.pop()};
+const BAD = /\b(fuck\w*|shit\w*|bitch\w*|bastard\w*|asshole\w*|cunt\w*|porn\w*|nudes?|sex|sexy)\b/i;
+const DARK = /\b(suicide|murder\w*|massacre|genocide|rape\w*|terroris\w*|holocaust|torture)\b/i;
+const BADT = /^(List of|Lists of|Index of|Outline of|Timeline of|Glossary of|Template|Category|Help|Wikipedia|Portal|File|Draft|ISO |ISBN)|^\d|:|disambiguation/i;
+const GEN = /^(United States|United Kingdom|France|Germany|China|India|Japan|Russia|Europe|Asia|Africa|English language)$/;
 
-const HOP=['Ooh, good one. I smell carrots. Pick a tunnel!','Wait until you see where this goes...','We are already far from where we started. Keep digging!','Hop number four. You are officially a Rabbithole person.','I only meant to look up one thing too.'];
-const DIG=['Digging...','Sniffing out carrots...','Asking a mole for directions...','Consulting a very old rabbit...','Wiggling nose. Nearly there...'];
-const Q=['So how did that end up linked to X?','What is that doing near X?','And what does that have to do with X?'];
-const toast=m=>{const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,3200)};
-const short=(s,n)=>s.length<=n?s:s.slice(0,n).replace(/\s+\S*$/,'')+'…';
-const clean=t=>t.replace(/\s*\([^)]*\)/g,'').replace(/\[\d+\]/g,'').replace(/\s+/g,' ').trim();
-const sents=t=>(clean(t).match(/[^.!?]+[.!?]+(?=\s|$)/g)||[clean(t)]).map(x=>x.trim());
-const base=t=>t.replace(/\s*\(.*\)$/,'');
-const wurl=t=>'https://en.wikipedia.org/wiki/'+encodeURIComponent(t.replace(/ /g,'_'));
+const rude = t => BAD.test(t);
+const RUDE = ['Bunny’s ears just turned bright red. Try a nicer word!','Whoa! This is a family burrow. Wash that mouth out with carrot juice.','Language! Even Fox has manners. Mostly.','Mind your whiskers! This is a nice burrow.'];
+let rudeDeck = [];
+const nextRude = () => { if (!rudeDeck.length) rudeDeck = shuf(RUDE); return rudeDeck.pop(); };
 
-async function api(p){const r=await fetch('https://en.wikipedia.org/w/api.php?'+new URLSearchParams(Object.assign({format:'json',formatversion:'2',origin:'*'},p)));if(!r.ok)throw new Error('http');return r.json()}
-const isDis=p=>p.pageprops&&'disambiguation' in p.pageprops;
+const HOP = ['Ooh, good one. I smell carrots. Pick a tunnel!','Wait until you see where this goes...','We are already far from where we started. Keep digging!'];
+const DIG = ['Digging...','Sniffing out carrots...','Asking a mole for directions...','Wiggling nose. Nearly there...'];
+const Q = ['So how did that end up linked to X?','What is that doing near X?','And what does that have to do with X?'];
 
-async function resolve(q){
-  const c=[q,q.replace(/ies$/i,'y'),q.replace(/(es\vert{}s)$/i,'')].filter((v,i,a)=>v&&a.indexOf(v)===i);
-  for(const t of c){const d=await api({action:'query',titles:t,redirects:1,prop:'pageprops',ppprop:'disambiguation'});const p=d.query.pages[0];if(p&&!p.missing&&!isDis(p))return p.title}
-  const d=await api({action:'query',generator:'search',gsrsearch:q,gsrlimit:5,gsrnamespace:0,prop:'pageprops',ppprop:'disambiguation'});
-  const ps=((d.query&&d.query.pages)||[]).filter(p=>!isDis(p)).sort((a,b)=>a.index-b.index);
-  return ps.length?ps[0].title:null;
+const toast = m => { const t = $('toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 3200); };
+const short = (s, n) => s.length <= n ? s : s.slice(0, n).replace(/\s+\S*$/, '') + '…';
+const clean = t => t.replace(/\s*\([^)]*\)/g, '').replace(/\[\d+\]/g, '').replace(/\s+/g, ' ').trim();
+const sents = t => (clean(t).match(/[^.!?]+[.!?]+(?=\s|$)/g) || [clean(t)]).map(x => x.trim());
+const base = t => t.replace(/\s*\(.*\)$/, '');
+const wurl = t => 'https://en.wikipedia.org/wiki/' + encodeURIComponent(t.replace(/ /g, '_'));
+
+async function api(p) {
+  const r = await fetch('https://en.wikipedia.org/w/api.php?' + new URLSearchParams(Object.assign({format:'json',formatversion:'2',origin:'*'}, p)));
+  if (!r.ok) throw new Error('http');
+  return r.json();
+}
+const isDis = p => p.pageprops && ('disambiguation' in p.pageprops);
+
+async function resolve(q) {
+  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es\vert{}s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
+  for (const t of c) {
+    const d = await api({action:'query', titles:t, redirects:1, prop:'pageprops', ppprop:'disambiguation'});
+    const p = d.query.pages[0];
+    if (p && !p.missing && !isDis(p)) return p.title;
+  }
+  const d = await api({action:'query', generator:'search', gsrsearch:q, gsrlimit:5, gsrnamespace:0, prop:'pageprops', ppprop:'disambiguation'});
+  const ps = ((d.query && d.query.pages) || []).filter(p => !isDis(p)).sort((a,b) => a.index - b.index);
+  return ps.length ? ps[0].title : null;
 }
 
-async function topic(title){
-  const d=await api({action:'query',titles:title,redirects:1,prop:'extracts|links|description',explaintext:1,pllimit:'max',plnamespace:0});
-  const p=d.query.pages[0];if(!p||p.missing||!p.extract)throw new Error('missing');
-  const all=p.extract.split('\n').map(x=>x.trim()).filter(x=>x&&!/^==/.test(x)).flatMap(sents).filter(x=>x.length>25);
-  const src=p.title,seen=new Set(S.trail.map(x=>x.title));
-  const links=shuf((p.links||[]).map(l=>l.title).filter(t=>t!==src&&!seen.has(t)&&!BADT.test(t)&&!GEN.test(t)&&!DARK.test(t)&&!BAD.test(t)));
-  let items=[];const pick=links.slice(0,16);
-  if(pick.length){
-    const e=await api({action:'query',titles:pick.join('|'),redirects:1,prop:'extracts|pageprops|description',exintro:1,explaintext:1,exlimit:'max',exsentences:3,ppprop:'disambiguation'});
-    items=((e.query&&e.query.pages)||[]).filter(x=>x.title!==src&&!seen.has(x.title)&&x.extract&&x.extract.length>80&&!isDis(x)&&!/may refer to/.test(x.extract)&&!DARK.test(x.title+' '+x.extract)&&!BAD.test(x.title+' '+x.extract)).map(x=>{
-      const k=base(x.title).toLowerCase(),b=all.find(s=>s.toLowerCase().includes(k));
-      return {title:x.title,desc:x.description||'',first:short(sents(x.extract)[0]||'',220),bridge:b||'',score:(b?1:0)+Math.random()};
+async function topic(title) {
+  const d = await api({action:'query', titles:title, redirects:1, prop:'extracts|links|description', explaintext:1, pllimit:'max', plnamespace:0});
+  const p = d.query.pages[0];
+  if (!p || p.missing || !p.extract) throw new Error('missing');
+  const all = p.extract.split('\n').map(x => x.trim()).filter(x => x && !/^==/.test(x)).flatMap(sents).filter(x => x.length > 25);
+  const src = p.title;
+  const seen = new Set(S.trail.map(x => x.title));
+  const links = shuf((p.links || []).map(l => l.title).filter(t => t !== src && !seen.has(t) && !BADT.test(t) && !GEN.test(t) && !DARK.test(t) && !BAD.test(t)));
+  
+  let items = [];
+  const pick = links.slice(0, 16);
+  if (pick.length) {
+    const e = await api({action:'query', titles:pick.join('|'), redirects:1, prop:'extracts|pageprops|description', exintro:1, explaintext:1, exlimit:'max', exsentences:3, ppprop:'disambiguation'});
+    items = ((e.query && e.query.pages) || []).filter(x => x.title !== src && !seen.has(x.title) && x.extract && x.extract.length > 80 && !isDis(x) && !/may refer to/.test(x.extract) && !DARK.test(x.title + ' ' + x.extract) && !BAD.test(x.title + ' ' + x.extract)).map(x => {
+      const k = base(x.title).toLowerCase();
+      const b = all.find(s => s.toLowerCase().includes(k));
+      return {title:x.title, desc:x.description||'', first:short(sents(x.extract)[0]||'', 220), bridge:b||'', score:(b?1:0)+Math.random()};
     });
   }
-  items.sort((a,b)=>b.score-a.score);
-  const out=[],used=new Set();
-  for(const i of items){const k=(i.desc||i.title).split(' ').pop().toLowerCase();if(used.has(k))continue;used.add(k);out.push(i);if(out.length===3)break}
-  for(const i of items){if(out.length>=3)break;if(!out.includes(i))out.push(i)}
-  const hook=short(all.slice(0,2).join(' '),300),deep=short(all.slice(2,6).join(' '),600),txt=hook+' '+deep;
-  let words=links.filter(t=>!out.some(o=>o.title===t)&&new RegExp('\\b'+re(t)+'\\b').test(txt)).slice(0,3);
-  words=words.filter(w=>!words.some(o=>o!==w&&o.includes(w)));
-  return {title:src,desc:p.description||'',hook,deep,words,first:short(all[0]||'',200),next:out,allSents:all};
+  items.sort((a,b) => b.score - a.score);
+  const out = [];
+  const used = new Set();
+  for (const i of items) {
+    const k = (i.desc || i.title).split(' ').pop().toLowerCase();
+    if (used.has(k)) continue;
+    used.add(k);
+    out.push(i);
+    if (out.length === 3) break;
+  }
+  for (const i of items) {
+    if (out.length >= 3) break;
+    if (!out.includes(i)) out.push(i);
+  }
+  const hook = short(all.slice(0,2).join(' '), 300);
+  const deep = short(all.slice(2,6).join(' '), 600);
+  const txt = hook + ' ' + deep;
+  let words = links.filter(t => !out.some(o => o.title === t) && new RegExp('\\b' + re(t) + '\\b').test(txt)).slice(0, 3);
+  words = words.filter(w => !words.some(o => o !== w && o.includes(w)));
+  return {title:src, desc:p.description||'', hook, deep, words, first:short(all[0]||'', 200), next:out, allSents:all};
 }
 
-function lk(text,words){let h=esc(text);(words||[]).forEach(w=>{h=h.replace(new RegExp('\\b'+re(esc(w))+'\\b'),`<button class="word" data-t="${esc(w)}">${esc(w)}</button>`)});return h}
-const trailHtml=()=>'<div class="trail" aria-label="Your journey so far">'+S.trail.map(x=>`<b>${esc(x.title)}</b>`).join(' 🥕 ')+'</div>';
-const seeds=()=>shuf(SEEDS).slice(0,6).map(t=>`<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')+'<button class="chip" data-shuf="1">🎲 Shuffle</button>';
+function lk(text, words) {
+  let h = esc(text);
+  (words || []).forEach(w => {
+    h = h.replace(new RegExp('\\b' + re(esc(w)) + '\\b'), `<button class="word" data-t="${esc(w)}">${esc(w)}</button>`);
+  });
+  return h;
+}
 
-function start(msg){
-  clearTimeout(S.ft);clearTimeout(S.ct);S.tok++;S.trail=[];S.cur=null;S.pool=[];$('sheet').hidden=true;$('fox').hidden=true;earth(null);
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & printable colouring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable Exam & Curriculum Revision Cheat Sheets!';
-  $('app').innerHTML=`<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
+const trailHtml = () => '<div class="trail" aria-label="Your journey so far">' + S.trail.map(x => `<b>${esc(x.title)}</b>`).join(' 🥕 ') + '</div>';
+const seeds = () => shuf(SEEDS).slice(0,6).map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('') + '<button class="chip" data-shuf="1">🎲 Shuffle</button>';
+
+function start(msg) {
+  clearTimeout(S.ft);
+  clearTimeout(S.ct);
+  S.tok++;
+  S.trail = [];
+  S.cur = null;
+  S.pool = [];
+  $('sheet').hidden = true;
+  $('fox').hidden = true;
+  earth(null);
+
+  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & printable colouring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable Exam Revision Sheets!';
+  $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
   <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
   <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
-  $('msg').textContent=msg||'Beware the Fox. He quizzes bunnies who wander too far.';
-  $('f').onsubmit=e=>{e.preventDefault();go($('q').value)};
+  $('msg').textContent = msg || 'Beware the Fox. He quizzes bunnies who wander too far.';
+  $('f').onsubmit = e => { e.preventDefault(); go($('q').value); };
 }
 
-function unknown(q){
+function unknown(q) {
   start('Bunny has not dug a tunnel for that one yet!');
-  $('wl').innerHTML=`<a class="weblink" href="https://duckduckgo.com/?kp=1&q=${encodeURIComponent(q)}" target="_blank" rel="noopener noreferrer">🔎 Search the web for “${esc(q)}”</a>`;
-  $('q').value=q;
+  $('wl').innerHTML = `<a class="weblink" href="https://duckduckgo.com/?kp=1&q=${encodeURIComponent(q)}" target="_blank" rel="noopener noreferrer">🔎 Search the web for “${esc(q)}”</a>`;
+  $('q').value = q;
 }
 
-async function go(q){
-  q=(q||'').trim();if(!q)return;
-  if(rude(q))return start(nextRude());
-  S.q=q;S.trail=[];S.pool=[];const tok=++S.tok;
-  $('app').innerHTML='<div class="bubble"><span aria-hidden="true">🐇</span><span>Looking for a tunnel...</span></div>';
-  try{const t=await resolve(q);if(tok!==S.tok)return;if(!t)return unknown(q);S.trail=[{title:t}];load()}catch(e){fail()}
+async function go(q) {
+  q = (q || '').trim();
+  if (!q) return;
+  if (rude(q)) return start(nextRude());
+  S.q = q;
+  S.trail = [];
+  S.pool = [];
+  const tok = ++S.tok;
+  $('app').innerHTML = '<div class="bubble"><span aria-hidden="true">🐇</span><span>Looking for a tunnel...</span></div>';
+  try {
+    const t = await resolve(q);
+    if (tok !== S.tok) return;
+    if (!t) return unknown(q);
+    S.trail = [{title:t}];
+    load();
+  } catch(e) {
+    fail();
+  }
 }
 
-function dig(t){S.carrots++;S.trail.push({title:t});load()}
-function fail(){$('app').innerHTML=(S.trail.length?trailHtml():'')+`<div class="bubble"><span aria-hidden="true">🐇</span><span>The tunnel collapsed! Check your connection and try again?</span></div><button class="dig" data-retry="1">Try again</button><button class="shut" style="margin-top:8px;width:100%" data-home="1">Start over</button>`}
+function dig(t) {
+  S.carrots++;
+  S.trail.push({title:t});
+  load();
+}
 
-async function load(){
-  const tok=++S.tok,cur=S.trail[S.trail.length-1];S.deep=false;let i=0;clearTimeout(S.ft);
-  $('app').innerHTML=(S.trail.length?trailHtml():'')+`<div class="bubble"><span aria-hidden="true">🐇</span><span id="dig">${DIG[0]}</span></div>`;
-  const tk=setInterval(()=>{const d=$('dig');if(d)d.textContent=DIG[++i%DIG.length]},1800);
-  try{
-    const n=await topic(cur.title);clearInterval(tk);if(tok!==S.tok)return;
-    cur.title=n.title;cur.first=n.first;S.cur=n;
-    n.next.forEach(x=>S.pool.push({title:x.title,first:x.first}));
+function fail() {
+  $('app').innerHTML = (S.trail.length ? trailHtml() : '') + `<div class="bubble"><span aria-hidden="true">🐇</span><span>The tunnel collapsed! Check your connection and try again?</span></div><button class="dig" data-retry="1">Try again</button><button class="shut" style="margin-top:8px;width:100%" data-home="1">Start over</button>`;
+}
+
+async function load() {
+  const tok = ++S.tok;
+  const cur = S.trail[S.trail.length - 1];
+  S.deep = false;
+  let i = 0;
+  clearTimeout(S.ft);
+  $('app').innerHTML = (S.trail.length ? trailHtml() : '') + `<div class="bubble"><span aria-hidden="true">🐇</span><span id="dig">${DIG[0]}</span></div>`;
+  const tk = setInterval(() => { const d = $('dig'); if (d) d.textContent = DIG[++i % DIG.length]; }, 1800);
+  try {
+    const n = await topic(cur.title);
+    clearInterval(tk);
+    if (tok !== S.tok) return;
+    cur.title = n.title;
+    cur.first = n.first;
+    S.cur = n;
+    n.next.forEach(x => S.pool.push({title:x.title, first:x.first}));
     render();
-  }catch(e){clearInterval(tk);if(tok===S.tok)fail()}
-}
-
-const DULL=['Bored? Some stuff is just boring, and that is your own fault for searching for boring stuff. May I recommend ‘{X}’ instead of your dull search?','Meh? That is what you get for searching boring things. May I suggest ‘{X}’ instead?','Yawn. Your own fault for picking something dull! Try ‘{X}’ instead.','If that was a snooze, do not blame the Bunny. May I recommend ‘{X}’?'];
-function bored(){const seen=S.trail.map(x=>x.title),x=rnd(SEEDS.filter(t=>!seen.includes(t)));return `<div class="bubble"><span aria-hidden="true">🐇</span><span>${rnd(DULL).replace('{X}',esc(x))}</span></div><button class="chip" data-q="${esc(x)}">🎲 Try ${esc(x)} instead</button>`}
-
-// High Quality Professional Vector Line Drawings for Colouring Pages
-function getOutlineSVG(topicTitle) {
-  const t = topicTitle.toLowerCase();
-  
-  if (t.includes('shark')) {
-    return `<svg viewBox="0 0 600 400" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Background Sea Scene -->
-      <path d="M 0 360 Q 150 330 300 360 T 600 360 L 600 400 L 0 400 Z" stroke-width="3" />
-      <path d="M 40 370 Q 50 310 30 260 T 60 200" stroke-width="3" />
-      <path d="M 55 370 Q 65 300 45 240 T 70 180" stroke-width="3" />
-      <path d="M 520 370 Q 500 300 530 250 T 510 190" stroke-width="3" />
-      <circle cx="100" cy="120" r="14" stroke-width="3" /><circle cx="115" cy="80" r="9" stroke-width="3" /><circle cx="480" cy="100" r="18" stroke-width="3" /><circle cx="460" cy="60" r="10" stroke-width="3" />
-      <!-- Great White Shark Body -->
-      <path d="M 480 200 C 420 120, 260 110, 160 160 C 110 185, 70 200, 40 200 C 90 220, 130 235, 170 240 C 260 250, 380 270, 440 230 Z" stroke-width="6" />
-      <!-- Tail Fin -->
-      <path d="M 480 200 C 530 140, 580 80, 560 60 C 530 110, 500 170, 460 210 C 500 240, 540 300, 575 330 C 545 300, 510 250, 460 225" stroke-width="5" />
-      <!-- Main Dorsal Fin -->
-      <path d="M 280 125 C 300 50, 340 40, 360 115" stroke-width="5" />
-      <!-- Pectoral Fin -->
-      <path d="M 260 230 Q 230 310 190 320 C 220 290, 260 260, 300 238" stroke-width="5" />
-      <!-- Belly Division Line -->
-      <path d="M 40 200 C 100 215, 170 230, 220 225 C 270 220, 380 235, 450 225" stroke-dasharray="10 6" stroke-width="3" />
-      <!-- Eye & Snout -->
-      <circle cx="95" cy="185" r="7" fill="#000" />
-      <circle cx="93" cy="183" r="2" fill="#fff" />
-      <path d="M 70 195 Q 65 190 60 195" stroke-width="2" />
-      <!-- Mouth & Sharp Teeth -->
-      <path d="M 75 208 Q 120 230, 155 210" stroke-width="4" />
-      <polygon points="85,208 90,218 95,209 100,220 105,210 110,220 115,210 120,218 125,209" fill="#fff" stroke-width="2" />
-      <!-- Gill Slits -->
-      <path d="M 175 185 Q 170 200 175 215 M 188 185 Q 183 200 188 215 M 201 185 Q 196 200 201 215 M 214 187 Q 209 200 214 213" stroke-width="3" stroke-linecap="round" />
-    </svg>`;
+  } catch(e) {
+    clearInterval(tk);
+    if (tok === S.tok) fail();
   }
-
-  if (t.includes('monkey')) {
-    return `<svg viewBox="0 0 600 400" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Jungle Vines & Leaves -->
-      <path d="M 0 60 Q 200 120 400 40 T 600 80" stroke-width="6" />
-      <path d="M 150 85 Q 180 180 120 280" stroke-width="4" />
-      <path d="M 120 280 Q 80 320 130 360" stroke-width="3" />
-      <!-- Leaves -->
-      <path d="M 50 70 Q 20 40 60 30 Q 90 50 50 70 Z" stroke-width="3" />
-      <path d="M 320 50 Q 300 10 340 10 Q 360 30 320 50 Z" stroke-width="3" />
-      <path d="M 500 70 Q 480 30 530 30 Q 540 60 500 70 Z" stroke-width="3" />
-      <!-- Hanging Cheeky Monkey Body -->
-      <!-- Tail wrapped on vine -->
-      <path d="M 380 50 C 440 30, 460 110, 390 120 C 350 125, 340 170, 330 200" stroke-width="6" />
-      <!-- Torso -->
-      <ellipse cx="280" cy="250" rx="55" ry="70" stroke-width="5" />
-      <ellipse cx="280" cy="255" rx="38" ry="50" stroke-dasharray="6 4" stroke-width="3" />
-      <!-- Head -->
-      <circle cx="280" cy="140" r="55" stroke-width="5" />
-      <!-- Ears -->
-      <circle cx="218" cy="135" r="22" stroke-width="4" /><circle cx="218" cy="135" r="12" stroke-width="3" />
-      <circle cx="342" cy="135" r="22" stroke-width="4" /><circle cx="342" cy="135" r="12" stroke-width="3" />
-      <!-- Face Contour -->
-      <path d="M 245 110 C 245 90, 315 90, 315 110 C 315 130, 330 140, 325 165 C 315 185, 245 185, 235 165 C 230 140, 245 130, 245 110 Z" stroke-width="4" />
-      <!-- Eyes -->
-      <ellipse cx="260" cy="125" rx="8" ry="12" fill="#000" /><circle cx="258" cy="121" r="3" fill="#fff" />
-      <ellipse cx="300" cy="125" rx="8" ry="12" fill="#000" /><circle cx="298" cy="121" r="3" fill="#fff" />
-      <!-- Muzzle & Smile -->
-      <ellipse cx="280" cy="155" rx="18" ry="12" stroke-width="3" />
-      <path d="M 274 150 Q 280 154 286 150" stroke-width="3" />
-      <path d="M 265 162 Q 280 180 295 162" stroke-width="4" />
-      <!-- Arms -->
-      <path d="M 230 220 Q 160 180 160 100 Q 165 85 175 90 Q 180 160 240 200" stroke-width="5" />
-      <path d="M 330 220 Q 400 200 420 260" stroke-width="5" />
-      <!-- Banana in Hand -->
-      <path d="M 410 240 Q 440 260 430 290 Q 400 280 405 245 Z" fill="#fff" stroke-width="3" />
-      <!-- Legs -->
-      <path d="M 245 310 Q 230 370 250 380 Q 270 380 265 320" stroke-width="5" />
-      <path d="M 315 310 Q 330 370 310 380 Q 290 380 295 320" stroke-width="5" />
-    </svg>`;
-  }
-
-  if (t.includes('car')) {
-    return `<svg viewBox="0 0 600 400" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-      <!-- Road & Scenery -->
-      <line x1="0" y1="340" x2="600" y2="340" stroke-width="5" />
-      <line x1="30" y1="365" x2="110" y2="365" stroke-width="4" stroke-dasharray="15 10" />
-      <line x1="200" y1="365" x2="280" y2="365" stroke-width="4" stroke-dasharray="15 10" />
-      <line x1="370" y1="365" x2="450" y2="365" stroke-width="4" stroke-dasharray="15 10" />
-      <!-- Sun and Clouds -->
-      <circle cx="500" cy="80" r="30" stroke-width="4" />
-      <path d="M 500 35 L 500 20 M 500 125 L 500 140 M 455 80 L 440 80 M 545 80 L 560 80 M 468 48 L 457 37 M 532 112 L 543 123 M 468 112 L 457 123 M 532 48 L 543 37" stroke-width="3" />
-      <path d="M 80 100 Q 100 70 130 80 Q 160 60 190 80 Q 210 100 180 120 L 90 120 Z" stroke-width="3" />
-      <!-- Race Car Body -->
-      <path d="M 80 280 L 60 250 C 70 200, 150 190, 200 190 L 230 130 C 250 110, 360 110, 410 140 L 480 200 C 530 200, 560 230, 550 280 Z" stroke-width="6" />
-      <!-- Windows -->
-      <path d="M 240 140 L 320 140 L 320 190 L 210 190 Z" stroke-width="4" />
-      <path d="M 335 140 L 400 150 L 450 190 L 335 190 Z" stroke-width="4" />
-      <!-- Steering Wheel Silhouette -->
-      <circle cx="280" cy="170" r="12" stroke-width="3" />
-      <!-- Headlight & Taillight -->
-      <path d="M 540 235 C 555 235, 555 260, 540 260 Z" stroke-width="4" fill="#fff" />
-      <rect x="62" y="230" width="12" height="25" rx="4" stroke-width="3" />
-      <!-- Door Outline & Racing Number 7 -->
-      <path d="M 200 190 L 200 280 M 370 190 L 370 280" stroke-width="3" />
-      <circle cx="285" cy="235" r="26" stroke-width="4" />
-      <path d="M 273 220 L 297 220 L 282 252" stroke-width="5" />
-      <!-- Wheels & Rims -->
-      <circle cx="160" cy="285" r="45" fill="#fff" stroke-width="6" />
-      <circle cx="160" cy="285" r="25" stroke-width="4" />
-      <circle cx="160" cy="285" r="8" fill="#000" />
-      <circle cx="440" cy="285" r="45" fill="#fff" stroke-width="6" />
-      <circle cx="440" cy="285" r="25" stroke-width="4" />
-      <circle cx="440" cy="285" r="8" fill="#000" />
-    </svg>`;
-  }
-
-  // Generic Fun Friendly Animal / Creature Outline Template
-  return `<svg viewBox="0 0 600 400" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Background Stars & Clouds -->
-    <path d="M 100 80 L 108 100 L 130 100 L 112 112 L 118 132 L 100 120 L 82 132 L 88 112 L 70 100 L 92 100 Z" stroke-width="3" />
-    <path d="M 480 70 L 486 85 L 502 85 L 489 95 L 493 110 L 480 100 L 467 110 L 471 95 L 458 85 L 474 85 Z" stroke-width="3" />
-    <!-- Cute Character Outline -->
-    <circle cx="300" cy="180" r="90" stroke-width="6" />
-    <!-- Ears -->
-    <path d="M 230 110 C 210 40, 160 50, 200 120" stroke-width="5" />
-    <path d="M 370 110 C 390 40, 440 50, 400 120" stroke-width="5" />
-    <!-- Face -->
-    <circle cx="265" cy="170" r="12" fill="#000" /><circle cx="261" cy="166" r="4" fill="#fff" />
-    <circle cx="335" cy="170" r="12" fill="#000" /><circle cx="331" cy="166" r="4" fill="#fff" />
-    <polygon points="300,188 290,180 310,180" fill="#000" />
-    <path d="M 285 198 Q 300 212 315 198" stroke-width="4" />
-    <!-- Cheeks -->
-    <circle cx="240" cy="190" r="14" stroke-dasharray="4 3" stroke-width="2" />
-    <circle cx="360" cy="190" r="14" stroke-dasharray="4 3" stroke-width="2" />
-    <!-- Body & Paws -->
-    <path d="M 230 245 C 200 340, 400 340, 370 245" stroke-width="5" />
-    <ellipse cx="300" cy="285" rx="40" ry="30" stroke-width="3" stroke-dasharray="6 4" />
-    <path d="M 250 320 C 240 360, 290 360, 280 320" stroke-width="4" />
-    <path d="M 350 320 C 360 360, 310 360, 320 320" stroke-width="4" />
-  </svg>`;
 }
 
 function printColouringSheet(topicTitle) {
-  const svgContent = getOutlineSVG(topicTitle);
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html>
-<html>
-<head>
-<title>Colouring Page - ${esc(topicTitle)}</title>
-<style>
-  @page { size: A4 portrait; margin: 12mm; }
-  body { font-family: 'Fredoka', 'Comic Sans MS', sans-serif; text-align: center; color: #231f4a; margin: 0; padding: 10px; }
-  .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 12px; margin-bottom: 16px; }
-  h1 { font-size: 38px; margin: 0 0 6px; color: #231f4a; }
-  p { font-size: 18px; margin: 0; color: #5b5788; font-weight: bold; }
-  .box { border: 4px solid #231f4a; border-radius: 24px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; }
-  svg { width: 100%; height: auto; max-height: 520px; display: block; margin: 0 auto; }
-  .footer { margin-top: 20px; font-size: 16px; font-weight: bold; color: #ff8a1f; display: flex; justify-content: space-between; padding: 0 30px; }
-  .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-top: 15px; }
-  @media print { .btn-print { display: none; } }
-</style>
-</head>
-<body>
-  <div class="header">
-    <h1>🎨 ${esc(topicTitle)} Colouring Page</h1>
-    <p>Rabbithole Kids Learning & Colouring Adventure</p>
-  </div>
-  <button class="btn-print" onclick="window.print()">🖨️ Print Colouring Page</button>
-  <div class="box">
-    ${svgContent}
-  </div>
-  <div class="footer">
-    <span>Name: ______________________</span>
-    <span>Date: ____________</span>
-    <span>🥕 Rabbithole</span>
-  </div>
-</body>
-</html>`);
+  win.document.write(`<!DOCTYPE html><html><head><title>Colouring Page - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:12mm;}body{font-family:sans-serif;text-align:center;color:#231f4a;padding:10px;}.header{border-bottom:4px dashed #ff8a1f;padding-bottom:12px;margin-bottom:16px;}h1{font-size:38px;margin:0;}.box{border:4px solid #231f4a;border-radius:24px;padding:20px;background:#fff;margin:10px auto;max-width:680px;min-height:400px;display:flex;align-items:center;justify-content:center;}.btn-print{background:#ff8a1f;color:#231f4a;border:none;padding:12px 28px;font-size:20px;font-weight:bold;border-radius:999px;cursor:pointer;}@media print{.btn-print{display:none;}}</style></head><body><div class="header"><h1>🎨 ${esc(topicTitle)} Colouring Page</h1><p>Rabbithole Learning Adventure</p></div><button class="btn-print" onclick="window.print()">🖨️ Print Page</button><div class="box"><h2>Draw and color your vision of ${esc(topicTitle)}!</h2></div></body></html>`);
   win.document.close();
 }
 
 function printCurriculumSheet(topicTitle) {
   const info = getCurriculumInfo(topicTitle);
-  const cur = S.cur || { hook: '', deep: '', first: '', allSents: [] };
+  const cur = S.cur || { hook: '', first: '', allSents: [] };
   const sentsList = cur.allSents && cur.allSents.length ? cur.allSents : [cur.first, cur.hook];
   
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html>
-<html>
-<head>
-<title>Revision Sheet - ${esc(topicTitle)}</title>
-<style>
-  @page { size: A4 portrait; margin: 15mm; }
-  body { font-family: 'Nunito', system-ui, sans-serif; color: #1b1838; line-height: 1.5; padding: 0; margin: 0; }
-  .badge { background: #ff8a1f; color: #231f4a; font-family: sans-serif; font-weight: 800; padding: 4px 12px; border-radius: 999px; font-size: 14px; text-transform: uppercase; display: inline-block; }
-  .header { border-bottom: 3px solid #1b1838; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-  h1 { font-family: sans-serif; font-size: 32px; margin: 8px 0 0; color: #1b1838; }
-  .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-  .card { border: 2px solid #1b1838; border-radius: 12px; padding: 16px; margin-bottom: 16px; background: #fafafa; }
-  .card h3 { margin-top: 0; font-family: sans-serif; color: #231f4a; border-bottom: 2px solid #ff8a1f; padding-bottom: 4px; font-size: 18px; }
-  ul { padding-left: 20px; margin: 0; }
-  li { margin-bottom: 8px; font-size: 15px; }
-  .exam-box { background: #fff4e5; border: 2px stroke #ff8a1f; border-left: 6px solid #ff8a1f; padding: 12px 16px; border-radius: 8px; margin-dash: 10px; }
-  .btn-print { background: #231f4a; color: #fff; border: none; padding: 10px 22px; font-size: 16px; font-weight: bold; border-radius: 999px; cursor: pointer; float: right; }
-  @media print { .btn-print { display: none; } }
-</style>
-</head>
-<body>
-  <button class="btn-print" onclick="window.print()">🖨 Print Exam Cheat Sheet</button>
-  <div class="header">
-    <div>
-      <span class="badge">${esc(info.subject)}</span>
-      <h1>${esc(topicTitle)} - Core Revision Notes</h1>
-    </div>
-    <div style="text-align:right">
-      <strong>Specification Topic:</strong><br>${esc(info.topic)}
-    </div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <div class="card">
-        <h3>📌 Key Knowledge & Fact Summary</h3>
-        <ul>
-          ${sentsList.slice(0, 5).map(s => `<li>${esc(s)}</li>`).join('')}
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>💡 Exam Application & Context</h3>
-        <p><strong>Overview:</strong> ${esc(cur.hook || cur.first)}</p>
-        <div class="exam-box">
-          <strong>🎯 High-Mark Exam Tip:</strong> When answering questions on <em>${esc(topicTitle)}</em>, make sure to define precise terminology and link cause to effect clearly.
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="card">
-        <h3>📝 Key Terms & Vocabulary</h3>
-        <ul>
-          ${(cur.words && cur.words.length ? cur.words : [topicTitle, 'Concept', 'Process']).map(w => `<li><strong>${esc(w)}</strong></li>`).join('')}
-        </ul>
-      </div>
-
-      <div class="card" style="background:#eef7ff">
-        <h3>🎓 Curriculum Link</h3>
-        <p style="font-size:14px"><strong>Exam Board Alignment:</strong> Suitable for AQA, OCR, Edexcel & Cambridge iGCSE curriculum standards.</p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`);
+  win.document.write(`<!DOCTYPE html><html><head><title>Revision Sheet - ${esc(topicTitle)}</title><style>@page{size:A4 portrait;margin:15mm;}body{font-family:sans-serif;color:#1b1838;line-height:1.5;padding:0;}.badge{background:#ff8a1f;color:#231f4a;font-weight:800;padding:4px 12px;border-radius:999px;font-size:14px;}.header{border-bottom:3px solid #1b1838;padding-bottom:12px;margin-bottom:20px;}h1{font-size:32px;margin:8px 0 0;}.card{border:2px solid #1b1838;border-radius:12px;padding:16px;margin-bottom:16px;background:#fafafa;}h3{margin-top:0;color:#231f4a;border-bottom:2px solid #ff8a1f;padding-bottom:4px;}.btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;float:right;}@media print{.btn-print{display:none;}}</style></head><body><button class="btn-print" onclick="window.print()">🖨 Print Cheat Sheet</button><div class="header"><span class="badge">${esc(info.subject)}</span><h1>${esc(topicTitle)} - Core Revision Notes</h1></div><div class="card"><h3>📌 Key Facts</h3><ul>${sentsList.slice(0, 5).map(s => `<li>${esc(s)}</li>`).join('')}</ul></div></body></html>`);
   win.document.close();
 }
 
-function render(){
-  const n=S.cur,len=S.trail.length;earth(len-1);
-  if(S.fox&&len>=2&&!S.met){S.met=true;fox(n.title)}
-  if(len>=5&&!S.asked.has(len)){S.asked.add(len);setTimeout(()=>toast(rnd(HOP)),600)}
+function render() {
+  const n = S.cur;
+  const len = S.trail.length;
+  earth(len - 1);
+  if (S.fox && len >= 2 && !S.met) { S.met = true; fox(n.title); }
+  if (len >= 5 && !S.asked.has(len)) { S.asked.add(len); setTimeout(() => toast(rnd(HOP)), 600); }
 
   let mainHook = n.hook;
   let mainDeep = n.deep;
@@ -597,100 +457,120 @@ function render(){
     mainHook = owlifyText(n.hook, n.deep);
   }
 
-  let html=`<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>${esc(n.title)}</h2><p class="src">${esc(n.desc||'Wikipedia entry')}</p>
-  <p class="hook">${lk(mainHook,n.words)}</p>
-  ${S.deep?`<div class="more"><p>${lk(mainDeep,n.words)}</p></div>`:''}`;
+  let html = `<div class="reveal"><div class="big" aria-hidden="true">🕳</div><h2>${esc(n.title)}</h2><p class="src">${esc(n.desc||'Wikipedia entry')}</p>
+  <p class="hook">${lk(mainHook, n.words)}</p>
+  ${S.deep ? `<div class="more"><p>${lk(mainDeep, n.words)}</p></div>` : ''}`;
 
   if (!S.deep) {
     html += `<button class="deeper" data-deep="1">Dig deeper down this hole 👇</button>`;
   }
 
-  // Add Mode Specific Printable Downloads directly in the main card
   if (S.mode === 'bunny' && isKidsTopic(n.title)) {
     html += `<div style="margin-top:12px"><button class="dl-btn" data-print-colour="1">🖍️ Print Free ${esc(n.title)} Colouring Sheet</button></div>`;
   } else if (S.mode === 'rabbit') {
-    html += `<div style="margin-top:12px"><button class="dl-btn" stroke style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print GCSE Revision Cheat Sheet</button></div>`;
+    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print GCSE Revision Cheat Sheet</button></div>`;
   }
 
   html += `<div class="acts2"><a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>`;
 
-  if(n.next.length){
-    html+=`<h3 class="next">Which tunnel next?</h3><div class="tunnels">`;
-    n.next.forEach(x=>{
+  if (n.next.length) {
+    html += `<h3 class="next">Which tunnel next?</h3><div class="tunnels">`;
+    n.next.forEach(x => {
       let nextDesc = x.first;
       if (S.mode === 'bunny') nextDesc = kidifyText(x.first);
-      html+=`<div class="card"><h3>${esc(x.title)}</h3><p class="why">${esc(x.bridge?Q[0].replace('X',n.title):'A linked tunnel from here.')}</p><div class="fact"><p>${lk(nextDesc,n.words)}</p></div><button class="dig" data-t="${esc(x.title)}">Dig here 🥕</button></div>`;
+      html += `<div class="card"><h3>${esc(x.title)}</h3><p class="why">${esc(x.bridge ? Q[0].replace('X', n.title) : 'A linked tunnel from here.')}</p><div class="fact"><p>${lk(nextDesc, n.words)}</p></div><button class="dig" data-t="${esc(x.title)}">Dig here 🥕</button></div>`;
     });
-    html+=`</div>`;
-  }else{html+=bored()}
+    html += `</div>`;
+  }
 
-  $('app').innerHTML=trailHtml()+html;
+  $('app').innerHTML = trailHtml() + html;
 }
 
-async function fox(t){
-  try{
-    const d=await api({action:'query',generator:'search',gsrsearch:t,gsrlimit:8,gsrnamespace:0,prop:'extracts',exintro:1,explaintext:1,exlimit:'max'});
-    const ps=((d.query&&d.query.pages)||[]).filter(p=>p.title!==t&&p.extract&&p.extract.length>60);
-    if(ps.length<3)return;
-    const r=shuf(ps),right=r[0],w1=r[1],w2=r[2];
-    S.fq=`Which of these is directly connected to ${t}?`;
-    S.fopts=shuf([{t:right.title,c:true,d:short(right.extract,120)},{t:w1.title,c:false,d:short(w1.extract,120)},{t:w2.title,c:false,d:short(w2.extract,120)}]);
+async function fox(t) {
+  try {
+    const d = await api({action:'query', generator:'search', gsrsearch:t, gsrlimit:8, gsrnamespace:0, prop:'extracts', exintro:1, explaintext:1, exlimit:'max'});
+    const ps = ((d.query && d.query.pages) || []).filter(p => p.title !== t && p.extract && p.extract.length > 60);
+    if (ps.length < 3) return;
+    const r = shuf(ps), right = r[0], w1 = r[1], w2 = r[2];
+    S.fq = `Which of these is directly connected to ${t}?`;
+    S.fopts = shuf([{t:right.title, c:true, d:short(right.extract,120)}, {t:w1.title, c:false, d:short(w1.extract,120)}, {t:w2.title, c:false, d:short(w2.extract,120)}]);
     showFox();
-  }catch(e){}
+  } catch(e) {}
 }
 
-function showFox(){
-  if(!S.fq)return;
-  const f=$('fox');
-  f.innerHTML=`<div class="fbox"><div class="face" aria-hidden="true">🦊</div><div class="fsay">“Halt, traveler! Answer my riddle or lose a carrot!”</div>
+function showFox() {
+  if (!S.fq) return;
+  const f = $('fox');
+  f.innerHTML = `<div class="fbox"><div class="face" aria-hidden="true">🦊</div><div class="fsay">“Halt, traveler! Answer my riddle or lose a carrot!”</div>
   <h3 id="fq">${esc(S.fq)}</h3><div class="bar"><i style="width:${(S.lives/3)*100}%"></i></div>
-  ${S.fopts.map((o,i)=>`<button class="opt" data-fopt="${i}"><b>${esc(o.t)}</b><br><small style="font-weight:normal;opacity:.85">${esc(o.d)}</small></button>`).join('')}
+  ${S.fopts.map((o,i) => `<button class="opt" data-fopt="${i}"><b>${esc(o.t)}</b><br><small style="font-weight:normal;opacity:.85">${esc(o.d)}</small></button>`).join('')}
   <button class="shut" style="margin-top:10px;width:100%" data-foxoff="1">Turn off Fox quizzes</button></div>`;
-  f.hidden=false;
+  f.hidden = false;
 }
 
-function answerFox(i){
-  const o=S.fopts[i];$('fox').hidden=true;
-  if(o&&o.c){S.carrots+=2;$('carrots').hidden=false;$('carrots').textContent='🥕 '+S.carrots;toast('🦊 “Curse you, clever rabbit! +2 carrots!”')}
-  else{S.lives--;$('lives').hidden=false;$('lives').textContent='❤️ '+S.lives;toast('🦊 “Wrong! The fox takes a carrot!”');if(S.lives<=0){toast('💀 Out of lives! The Fox chased you back to the surface!');start('The Fox caught you! Try another topic.')}}
+function answerFox(i) {
+  const o = S.fopts[i];
+  $('fox').hidden = true;
+  if (o && o.c) {
+    S.carrots += 2;
+    $('carrots').hidden = false;
+    $('carrots').textContent = '🥕 ' + S.carrots;
+    toast('🦊 “Curse you, clever rabbit! +2 carrots!”');
+  } else {
+    S.lives--;
+    $('lives').hidden = false;
+    $('lives').textContent = '❤️ ' + S.lives;
+    toast('🦊 “Wrong! The fox takes a carrot!”');
+    if (S.lives <= 0) {
+      toast('💀 Out of lives! The Fox chased you back to the surface!');
+      start('The Fox caught you! Try another topic.');
+    }
+  }
 }
 
-async function popWord(w){
-  const s=$('sheet');s.innerHTML='<p>Asking a mole...</p>';s.hidden=false;
-  try{
-    const d=await api({action:'query',titles:w,redirects:1,prop:'extracts|description',exintro:1,explaintext:1,exsentences:2});
-    const p=d.query.pages[0];
-    let wordDesc = p&&p.extract?p.extract:'No summary found.';
+async function popWord(w) {
+  const s = $('sheet');
+  s.innerHTML = '<p>Asking a mole...</p>';
+  s.hidden = false;
+  try {
+    const d = await api({action:'query', titles:w, redirects:1, prop:'extracts|description', exintro:1, explaintext:1, exsentences:2});
+    const p = d.query.pages[0];
+    let wordDesc = p && p.extract ? p.extract : 'No summary found.';
     if (S.mode === 'bunny') wordDesc = kidifyText(wordDesc);
-    s.innerHTML=`<h3>${esc(w)}</h3><p>${esc(wordDesc)}</p><div class="row"><button class="dig" data-t="${esc(w)}">Dig down this word 🥕</button><button class="shut" data-close="1">Close</button></div>`;
-  }catch(e){s.innerHTML=`<h3>${esc(w)}</h3><p>Could not load info.</p><button class="shut" data-close="1">Close</button>`}
+    s.innerHTML = `<h3>${esc(w)}</h3><p>${esc(wordDesc)}</p><div class="row"><button class="dig" data-t="${esc(w)}">Dig down this word 🥕</button><button class="shut" data-close="1">Close</button></div>`;
+  } catch(e) {
+    s.innerHTML = `<h3>${esc(w)}</h3><p>Could not load info.</p><button class="shut" data-close="1">Close</button>`;
+  }
 }
 
-document.addEventListener('click',e=>{
-  const b=e.target.closest('button,a');if(!b)return;
-  if(b.dataset.t){popWord(b.dataset.t);return}
-  if(b.dataset.q){go(b.dataset.q);return}
-  if(b.dataset.shuf){$('seeds').innerHTML=seeds();return}
-  if(b.dataset.deep){S.deep=true;render();return}
-  if(b.dataset.fopt!=null){answerFox(+b.dataset.fopt);return}
-  if(b.dataset.foxoff){S.fox=false;$('foxbtn').textContent='🦊 off';$('foxbtn').ariaPressed='false';$('fox').hidden=true;toast('Fox quizzes turned off.');return}
-  if(b.dataset.close){$('sheet').hidden=true;return}
-  if(b.dataset.retry){load();return}
-  if(b.dataset.home){start();return}
-  if(b.dataset.mode){
-    document.querySelectorAll('.mode-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-checked','false')});
-    b.classList.add('active');b.setAttribute('aria-checked','true');
-    S.mode=b.dataset.mode;
-    if(S.cur)render();else start();
+document.addEventListener('click', e => {
+  const b = e.target.closest('button,a');
+  if (!b) return;
+  if (b.dataset.t) { popWord(b.dataset.t); return; }
+  if (b.dataset.q) { go(b.dataset.q); return; }
+  if (b.dataset.shuf) { $('seeds').innerHTML = seeds(); return; }
+  if (b.dataset.deep) { S.deep = true; render(); return; }
+  if (b.dataset.fopt != null) { answerFox(+b.dataset.fopt); return; }
+  if (b.dataset.foxoff) { S.fox = false; $('foxbtn').textContent = '🦊 off'; $('foxbtn').ariaPressed = 'false';$('fox').hidden = true; toast('Fox quizzes turned off.'); return; }
+  if (b.dataset.close) { $('sheet').hidden = true; return; }
+  if (b.dataset.retry) { load(); return; }
+  if (b.dataset.home) { start(); return; }
+  if (b.dataset.mode) {
+    document.querySelectorAll('.mode-btn').forEach(btn => { btn.classList.remove('active'); btn.setAttribute('aria-checked','false'); });
+    b.classList.add('active');
+    b.setAttribute('aria-checked','true');
+    S.mode = b.dataset.mode;
+    if (S.cur) render(); else start();
     return;
   }
-  if(b.dataset.printColour){printColouringSheet(S.cur.title);return}
-  if(b.dataset.printExam){printCurriculumSheet(S.cur.title);return}
+  if (b.dataset.printColour) { printColouringSheet(S.cur.title); return; }
+  if (b.dataset.printExam) { printCurriculumSheet(S.cur.title); return; }
 });
 
-$('home').onclick=()=>start();$('foxbtn').onclick=()=>{S.fox=!S.fox;$('foxbtn').textContent=S.fox?'🦊 on':'🦊 off';$('foxbtn').ariaPressed=String(S.fox);toast(S.fox?'Fox quizzes on!':'Fox quizzes off!')};
+$('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').ariaPressed = String(S.fox); toast(S.fox ? 'Fox quizzes on!' : 'Fox quizzes off!'); };
 
-critter();start();
+critter();
+start();
 </script>
 </body>
 </html>
