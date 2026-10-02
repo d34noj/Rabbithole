@@ -294,28 +294,29 @@ async function resolve(q) {
   return ps.length ? ps[0].title : null;
 }
 
+// Updated to prioritize SVG vector line-art and illustrations for authentic coloring pages
 async function getTopicImage(title) {
+  try {
+    const d = await api({action:'query', titles:title, redirects:1, prop:'images', imlimit:25});
+    const p = d.query?.pages?.[0];
+    if (p?.images?.length) {
+      const svgImg = p.images.find(i => {
+        const t = i.title.toLowerCase();
+        return t.endsWith('.svg') && !t.includes('logo') && !t.includes('icon') && !t.includes('flag') && !t.includes('symbol') && !t.includes('map') && !t.includes('chart');
+      });
+      if (svgImg) {
+        const imgInfo = await api({action:'query', titles:svgImg.title, prop:'imageinfo', iiprop:'url'});
+        const ip = imgInfo.query?.pages?.[0];
+        if (ip?.imageinfo?.[0]?.url) return ip.imageinfo[0].url;
+      }
+    }
+  } catch(e){}
+
   try {
     const d = await api({action:'query', titles:title, redirects:1, prop:'pageimages', piprop:'thumbnail|original', pithumbsize:800});
     const p = d.query?.pages?.[0];
     if (p?.thumbnail?.source) return p.thumbnail.source;
     if (p?.original?.source) return p.original.source;
-  } catch(e){}
-
-  try {
-    const d = await api({action:'query', titles:title, redirects:1, prop:'images', imlimit:10});
-    const p = d.query?.pages?.[0];
-    if (p?.images?.length) {
-      const valid = p.images.find(i => {
-        const t = i.title.toLowerCase();
-        return !t.includes('logo') && !t.includes('icon') && !t.includes('flag') && !t.includes('symbol') && !t.includes('edit') && (t.endsWith('.jpg') || t.endsWith('.png') || t.endsWith('.jpeg'));
-      });
-      if (valid) {
-        const imgInfo = await api({action:'query', titles:valid.title, prop:'imageinfo', iiprop:'url'});
-        const ip = imgInfo.query?.pages?.[0];
-        if (ip?.imageinfo?.[0]?.url) return ip.imageinfo[0].url;
-      }
-    }
   } catch(e){}
   return null;
 }
@@ -398,7 +399,7 @@ function start(msg) {
   $('fox').hidden = true;
   earth(null);
 
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & printable colouring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable Exam Revision Sheets!';
+  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & printable vector colouring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable Exam Revision Sheets!';
   $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
   <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
   <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
@@ -470,6 +471,7 @@ async function load() {
 function printColouringSheet(topicTitle, imgUrl) {
   if (!imgUrl) return;
   
+  const isSvg = imgUrl.toLowerCase().endsWith('.svg');
   const win = window.open('', '_blank');
   if (!win) {
     toast('Please allow popups to print!');
@@ -483,11 +485,11 @@ function printColouringSheet(topicTitle, imgUrl) {
   <title>Colouring Page - ${esc(topicTitle)}</title>
   <style>
     @page { size: A4 portrait; margin: 10mm; }
-    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; margin:0; }
-    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10px; margin-bottom: 16px; }
+    body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; margin:0; background: #fff; }
+    .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10mm; margin-bottom: 16px; }
     h1 { font-size: 36px; margin: 0; color: #ff8a1f; }
-    .box { border: 4px solid #231f4a; border-radius: 20px; padding: 15px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 440px; display: flex; align-items: center; justify-content: center; }
-    img { max-width: 100%; max-height: 600px; filter: grayscale(100%) contrast(300%) brightness(110%); border-radius: 8px; object-fit: contain; }
+    .box { border: 4px solid #231f4a; border-radius: 20px; padding: 20px; background: #fff; margin: 10px auto; max-width: 680px; min-height: 480px; display: flex; align-items: center; justify-content: center; }
+    img { max-width: 100%; max-height: 600px; object-fit: contain; ${isSvg ? '' : 'filter: grayscale(100%) contrast(200%);'} }
     .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
     @media print { .btn-print { display: none; } }
   </style>
