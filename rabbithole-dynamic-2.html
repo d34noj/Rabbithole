@@ -234,7 +234,7 @@ function isKidsTopic(topic) {
   return kidsKeywords.some(k => t.includes(k));
 }
 
-// Hand-picked, wonderfully childlike and friendly vector image URLs for kids coloring mode
+// Reliable direct illustration links for kids coloring mode
 const customColouringSheets = {
     'shark': 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Shark_cartoon.svg',
     'monkey': 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Monkey_drawing.svg',
@@ -248,24 +248,25 @@ const customColouringSheets = {
     'butterfly': 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Butterfly_cartoon.svg'
 };
 
-const CURRICULUM_DB = [
-  { keywords: ['volcano', 'earthquake', 'plate tectonics', 'geology', 'mountain'], subject: 'GCSE Geography', topic: 'Natural Hazards & Tectonic Processes' },
-  { keywords: ['dinosaur', 'fossil', 'evolution', 'dna', 'genetics'], subject: 'GCSE Biology', topic: 'Inheritance, Variation & Evolution' },
-  { keywords: ['shark', 'fish', 'octopus', 'dolphin', 'ocean', 'ecosystem', 'biodiversity'], subject: 'GCSE Biology', topic: 'Ecology & Marine Ecosystems' },
-  { keywords: ['black hole', 'saturn', 'moon', 'solar system', 'star', 'space', 'gravity', 'sun'], subject: 'GCSE Physics', topic: 'Space Physics & Gravitational Fields' },
-  { keywords: ['computer', 'code', 'algorithm'], subject: 'GCSE Computer Science', topic: 'Algorithms, Logic & Cryptography' },
-  { keywords: ['car', 'bicycle', 'motion', 'speed', 'energy', 'force'], subject: 'GCSE Physics', topic: 'Forces, Motion & Energy Transfer' },
-  { keywords: ['pyramid', 'castle', 'stonehenge'], subject: 'KS3 / GCSE History', topic: 'Ancient Civilisations & Architecture' },
-  { keywords: ['lightning', 'electricity', 'circuit', 'magnet'], subject: 'GCSE Physics', topic: 'Electricity & Magnetism' },
-  { keywords: ['glacier', 'seaside', 'coastal', 'erosion'], subject: 'GCSE Geography', topic: 'Physical Landscapes & Coastal Processes' }
-];
-
-function getCurriculumInfo(topicTitle) {
+// Maps topics to free, open-access GCSE resource hubs (Physics & Maths Tutor, Corbettmaths, Maths Genie)
+function getFreeGcseResource(topicTitle) {
   const t = topicTitle.toLowerCase();
-  for (const item of CURRICULUM_DB) {
-    if (item.keywords.some(k => t.includes(k))) return item;
+  if (t.includes('math') || t.includes('number') || t.includes('algebra') || t.includes('geometry') || t.includes('statistic')) {
+    return { name: 'Corbettmaths / Maths Genie Free PDFs', url: 'https://corbettmaths.com/contents/' };
   }
-  return { subject: 'GCSE Science & Humanities', topic: 'Key Core Curriculum Concepts' };
+  if (t.includes('biology') || t.includes('ecosystem') || t.includes('evolution') || t.includes('cell') || t.includes('dna')) {
+    return { name: 'Physics & Maths Tutor (GCSE Biology)', url: 'https://www.physicsandmathstutor.com/biology-revision/gcse-aqa/' };
+  }
+  if (t.includes('chemistry') || t.includes('atomic') || t.includes('bonding') || t.includes('reaction')) {
+    return { name: 'Physics & Maths Tutor (GCSE Chemistry)', url: 'https://www.physicsandmathstutor.com/chemistry-revision/gcse-aqa/' };
+  }
+  if (t.includes('physics') || t.includes('space') || t.includes('gravity') || t.includes('electricity') || t.includes('motion') || t.includes('energy') || t.includes('force')) {
+    return { name: 'Physics & Maths Tutor (GCSE Physics)', url: 'https://www.physicsandmathstutor.com/physics-revision/gcse-aqa/' };
+  }
+  if (t.includes('computer') || t.includes('code') || t.includes('algorithm')) {
+    return { name: 'Physics & Maths Tutor (Computer Science)', url: 'https://www.physicsandmathstutor.com/computer-science-revision/gcse-aqa/' };
+  }
+  return { name: 'Physics & Maths Tutor (GCSE Hub)', url: 'https://www.physicsandmathstutor.com/' };
 }
 
 const BAD = /\b(fuck\w*|shit\w*|bitch\w*|bastard\w*|asshole\w*|cunt\w*|porn\w*|nudes?|sex|sexy)\b/i;
@@ -297,7 +298,7 @@ async function api(p) {
 const isDis = p => p.pageprops && ('disambiguation' in p.pageprops);
 
 async function resolve(q) {
-  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es|s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
+  const c = [q, q.replace(/ies$/i, 'y'), q.replace(/(es\vert{}s)$/i, '')].filter((v, i, a) => v && a.indexOf(v) === i);
   for (const t of c) {
     const d = await api({action:'query', titles:t, redirects:1, prop:'pageprops', ppprop:'disambiguation'});
     const p = d.query.pages[0];
@@ -308,13 +309,11 @@ async function resolve(q) {
   return ps.length ? ps[0].title : null;
 }
 
-// Uses curated custom childlike illustrations first, with Wikipedia fallback
 async function getTopicImage(title) {
   const key = title.toLowerCase().trim();
   if (customColouringSheets[key]) {
     return customColouringSheets[key];
   }
-  // Fallback to Wikipedia pageimages if not in custom set
   try {
     const d = await api({action:'query', titles:title, redirects:1, prop:'pageimages', piprop:'thumbnail|original', pithumbsize:800});
     const p = d.query?.pages?.[0];
@@ -402,7 +401,7 @@ function start(msg) {
   $('fox').hidden = true;
   earth(null);
 
-  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun vector coloring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Printable GCSE Exam Revision Sheets!';
+  let modeDesc = S.mode === 'bunny' ? '🐰 Bunny Mode: Easy words & fun vector coloring sheets for kids!' : S.mode === 'owl' ? '🦉 Owl Mode: In-depth scholarly facts for adults!' : '🐇 Rabbit Mode: Free GCSE Revision Hub & Practice Sheets!';
   $('app').innerHTML = `<div class="hero"><div class="bun" aria-hidden="true">🐇</div><h1>Ask anything.<br>Fall down five.</h1><p class="sub" style="font-weight:700;color:var(--carrot);margin-bottom:6px">${modeDesc}</p><p class="sub" id="msg"></p>
   <form id="f"><input id="q" placeholder="What are you curious about?" autocomplete="off" aria-label="Search"><button class="go">Down we go</button></form>
   <div id="wl"></div><p class="sub" style="margin-top:22px">No idea? Try one of these:</p><div class="chips" id="seeds">${seeds()}</div></div>`;
@@ -473,19 +472,9 @@ async function load() {
 
 function printColouringSheet(topicTitle, imgUrl) {
   if (!imgUrl) return;
-  
   const win = window.open('', '_blank');
-  if (!win) {
-    toast('Please allow popups to print!');
-    return;
-  }
-
-  win.document.write(`<!DOCTYPE html>
-  <html>
-  <head>
-  <meta charset="utf-8">
-  <title>Colouring Page - ${esc(topicTitle)}</title>
-  <style>
+  if (!win) { toast('Please allow popups to print!'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Colouring Page - ${esc(topicTitle)}</title><style>
     @page { size: A4 portrait; margin: 10mm; }
     body { font-family: sans-serif; text-align: center; color: #231f4a; padding: 10px; margin:0; background: #fff; }
     .header { border-bottom: 4px dashed #ff8a1f; padding-bottom: 10mm; margin-bottom: 16px; }
@@ -494,66 +483,18 @@ function printColouringSheet(topicTitle, imgUrl) {
     img { max-width: 100%; max-height: 600px; object-fit: contain; filter: grayscale(100%) contrast(250%) brightness(110%); }
     .btn-print { background: #ff8a1f; color: #231f4a; border: none; padding: 12px 28px; font-size: 20px; font-weight: bold; border-radius: 999px; cursor: pointer; margin-bottom: 12px; }
     @media print { .btn-print { display: none; } }
-  </style>
-  </head>
-  <body>
+  </style></head><body>
     <button class="btn-print" onclick="window.print()">🖨 Print Colouring Sheet</button>
-    <div class="header">
-      <h1>🎨 ${esc(topicTitle)}</h1>
-      <p>Rabbithole Colouring Adventure</p>
-    </div>
+    <div class="header"><h1>🎨 ${esc(topicTitle)}</h1><p>Rabbithole Colouring Adventure</p></div>
     <div class="box"><img src="${imgUrl}" alt="${esc(topicTitle)}"></div>
-  </body>
-  </html>`);
+  </body></html>`);
   win.document.close();
 }
 
-// Styled after Twinkl teacher-crafted educational resource sheets
-function printCurriculumSheet(topicTitle) {
-  const info = getCurriculumInfo(topicTitle);
-  const cur = S.cur || { hook: '', first: '', allSents: [] };
-  const sentsList = cur.allSents && cur.allSents.length ? cur.allSents : [cur.first, cur.hook];
-  
-  const win = window.open('', '_blank');
-  if (!win) { toast('Please allow popups!'); return; }
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Twinkl-Style Revision Sheet - ${esc(topicTitle)}</title><style>
-    @page{size:A4 portrait;margin:15mm;}
-    body{font-family:'Nunito',sans-serif;color:#231f4a;line-height:1.5;padding:0;background:#fff;}
-    .twinkl-banner{background:#ff8a1f;color:#231f4a;padding:16px 20px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border:3px solid #231f4a;}
-    .twinkl-badge{background:#fff;color:#231f4a;font-weight:700;padding:6px 14px;border-radius:999px;font-size:14px;text-transform:uppercase;}
-    h1{font-size:28px;margin:0;font-family:'Fredoka',sans-serif;}
-    .card{border:3px solid #231f4a;border-radius:14px;padding:16px 20px;margin-bottom:16px;background:#f9f8ff;}
-    .card.yellow{background:#fffde6;}
-    .card.blue{background:#eef6ff;}
-    h3{margin-top:0;color:#231f4a;font-family:'Fredoka',sans-serif;border-bottom:2px dashed #ff8a1f;padding-bottom:6px;font-size:20px;}
-    ul{margin:8px 0;padding-left:20px;}
-    li{margin-bottom:6px;}
-    .btn-print{background:#231f4a;color:#fff;border:none;padding:10px 22px;font-size:16px;font-weight:bold;border-radius:999px;cursor:pointer;font-family:'Fredoka',sans-serif;margin-bottom:16px;display:inline-block;}
-    @media print{.btn-print{display:none;}}
-  </style></head><body>
-    <button class="btn-print" onclick="window.print()">🖨 Print Twinkl-Style Revision Sheet</button>
-    <div class="twinkl-banner">
-      <div>
-        <span class="twinkl-badge">${esc(info.subject)}</span>
-        <h1>${esc(topicTitle)}</h1>
-      </div>
-      <div style="font-size:32px">🌟</div>
-    </div>
-    <div class="card yellow">
-      <h3>📌 Core Knowledge & Key Facts</h3>
-      <ul>${sentsList.slice(0, 4).map(s => `<li>${esc(s)}</li>`).join('')}</ul>
-    </div>
-    <div class="card blue">
-      <h3>💡 Revision & Exam Spotlight</h3>
-      <p>${esc(cur.deep || cur.hook)}</p>
-    </div>
-    <div class="card">
-      <h3>✍️ Check Your Understanding</h3>
-      <p><b>1.</b> Summarize why ${esc(topicTitle)} is a key concept in ${esc(info.topic)}.</p>
-      <p><b>2.</b> List two key characteristics or impacts associated with this topic.</p>
-    </div>
-  </body></html>`);
-  win.document.close();
+// Opens the free open-access GCSE resource hub for the topic
+function openFreeGcseHub(topicTitle) {
+  const res = getFreeGcseResource(topicTitle);
+  window.open(res.url, '_blank', 'noopener,noreferrer');
 }
 
 function render() {
@@ -584,7 +525,8 @@ function render() {
   if (S.mode === 'bunny' && isKidsTopic(n.title) && n.img) {
     html += `<div style="margin-top:12px"><button class="dl-btn" data-print-colour="1">🖍️ Print Free ${esc(n.title)} Colouring Sheet</button></div>`;
   } else if (S.mode === 'rabbit') {
-    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-print-exam="1">📑 Print Twinkl GCSE Revision Sheet</button></div>`;
+    const freeRes = getFreeGcseResource(n.title);
+    html += `<div style="margin-top:12px"><button class="dl-btn" style="background:#231f4a;color:#fff" data-free-gcse="1">📑 Free GCSE PDFs: ${esc(freeRes.name)}</button></div>`;
   }
 
   html += `<div class="acts2"><a class="wiki" href="${wurl(n.title)}" target="_blank" rel="noopener noreferrer">📖 Wikipedia</a></div></div>`;
@@ -681,7 +623,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (b.dataset.printColour) { printColouringSheet(S.cur.title, S.cur.img); return; }
-  if (b.dataset.printExam) { printCurriculumSheet(S.cur.title); return; }
+  if (b.dataset.freeGcse) { openFreeGcseHub(S.cur.title); return; }
 });
 
 $('home').onclick = () => start();$('foxbtn').onclick = () => { S.fox = !S.fox; $('foxbtn').textContent = S.fox ? '🦊 on' : '🦊 off'; $('foxbtn').ariaPressed = String(S.fox); toast(S.fox ? 'Fox quizzes on!' : 'Fox quizzes off!'); };
